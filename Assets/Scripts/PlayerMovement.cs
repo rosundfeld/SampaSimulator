@@ -5,6 +5,8 @@ using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public static PlayerMovement Instance;
+
     [Header("Stats")]
     public float maxStamina;
     public float currentStamina;
@@ -12,7 +14,6 @@ public class PlayerMovement : MonoBehaviour
     public float staminaRegenRate;
     public float minStaminaToRun;
     public float regenDelay;
-
     private float regenTimer;
 
     [Header("UI")]
@@ -40,6 +41,10 @@ public class PlayerMovement : MonoBehaviour
     bool grounded;
     bool isRunning = false;
 
+    [Header("Interaction")]
+    public bool isInteracting = false;
+    public float rotationSpeed = 5f;
+
     public Transform orientation;
 
     float horizontalInput;
@@ -51,6 +56,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        if (Instance == null)
+            Instance = this;
+
         currentStamina = maxStamina;
 
         if (staminaBar != null)
@@ -156,31 +164,46 @@ public class PlayerMovement : MonoBehaviour
         // Calculate movement direction based on input and orientation
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        if (isRunning)
+        if(isInteracting == false)
         {
-            if (grounded)
+            if (isRunning)
             {
-                rb.AddForce(moveDirection.normalized * runningSpeed * 10f, ForceMode.Force);
+                if (grounded)
+                {
+                    rb.AddForce(moveDirection.normalized * runningSpeed * 10f, ForceMode.Force);
+
+                }
+                else if(!grounded)
+                {
+                    rb.AddForce(moveDirection.normalized * runningSpeed * 10f * airMultiplier, ForceMode.Force);
+                }
 
             }
-            else if(!grounded)
+            else
             {
-                rb.AddForce(moveDirection.normalized * runningSpeed * 10f * airMultiplier, ForceMode.Force);
-            }
+                if (grounded)
+                {
+                    rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
 
+                }
+                else if (!grounded)
+                {
+                    rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+                }
+            }
         }
-        else
+    }
+
+    public void RotateTowardsTarget(Transform target)
+    {
+        Transform playerObj = GetComponentInChildren<Transform>();
+        if (playerObj != null && playerObj.name == "PlayerObj")
         {
-            if (grounded)
-            {
-                rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-
-            }
-            else if (!grounded)
-            {
-                rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
-            }
+            Vector3 direction = (target.position - playerObj.position).normalized; // Direção para o alvo
+            Quaternion lookRotation = Quaternion.LookRotation(direction); // Calcula a rotação necessária
+            playerObj.rotation = Quaternion.Slerp(playerObj.rotation, lookRotation, Time.deltaTime * rotationSpeed);
         }
+       
     }
 
     private void SpeedControl()
