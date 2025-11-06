@@ -11,8 +11,7 @@ public class DialogManager : MonoBehaviour
     public Image characterIcon;
     public TextMeshProUGUI characterName;
     public TextMeshProUGUI dialogArea;
-
-    private Queue<DialogLine> lines = new Queue<DialogLine>();
+	private Queue<DialogLine> lines = new Queue<DialogLine>();
 
     public bool isDialogActive = false;
 
@@ -30,7 +29,7 @@ public class DialogManager : MonoBehaviour
     {
         isDialogActive = true;
 
-        animator.Play("show");
+		animator.Play("show");
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -79,7 +78,7 @@ public class DialogManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         PlayerMovement.Instance.isInteracting = false;
-        isDialogActive = false;
+		isDialogActive = false;
         animator.Play("hide");
     }
 }

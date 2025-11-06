@@ -1,7 +1,7 @@
-using UnityEngine.UI;
 using UnityEngine;
-using UnityEngine.UIElements;
-using TMPro;
+using UnityEngine.UI;
+using System.Collections;
+
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -17,8 +17,7 @@ public class PlayerMovement : MonoBehaviour
     private float regenTimer;
 
     [Header("UI")]
-    public UnityEngine.UI.Slider staminaBar;
-    public TextMeshProUGUI staminaText;
+    public UnityEngine.UI.Image staminaBar;
 
     [Header("Movement")]
     public float moveSpeed; // Speed of player movement
@@ -54,7 +53,9 @@ public class PlayerMovement : MonoBehaviour
 
     Rigidbody rb;
 
-    private void Start()
+	Coroutine hideCoroutine;
+
+	private void Start()
     {
         if (Instance == null)
             Instance = this;
@@ -63,8 +64,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (staminaBar != null)
         {
-            staminaBar.maxValue = maxStamina;
-            staminaBar.value = currentStamina;
+            staminaBar.fillAmount = currentStamina;
         }
 
         rb = GetComponent<Rigidbody>();
@@ -118,23 +118,43 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    private void checkStamina()
+	IEnumerator WaitToHideStamina()
+	{
+		yield return new WaitForSeconds(5f);
+		staminaBar.gameObject.SetActive(false);
+		hideCoroutine = null; // Libera referência
+	}
+
+	private void checkStamina()
     {
-        if (isRunning)
-        {
-            DrainStamina();
-        }
-        else
-        {
-            RegenStamina();
-        }
+		if (isRunning)
+		{
+			// Se o jogador começou a correr novamente, cancela qualquer tentativa de esconder
+			if (hideCoroutine != null)
+			{
+				StopCoroutine(hideCoroutine);
+				hideCoroutine = null;
+			}
 
-        currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+			staminaBar.gameObject.SetActive(true);
+			DrainStamina();
+		}
+		else
+		{
+			// Só inicia a coroutine se ainda não estiver rodando
+			if (hideCoroutine == null)
+			{
+				hideCoroutine = StartCoroutine(WaitToHideStamina());
+			}
 
-        if (staminaBar != null && staminaText != null)
-            staminaBar.value = currentStamina;
-            staminaText.text = $"{Mathf.Round(currentStamina)}";
-    }
+			RegenStamina();
+		}
+
+		currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+
+		if (staminaBar != null)
+			staminaBar.fillAmount = currentStamina / maxStamina;
+	}
 
     private void DrainStamina()
     {
