@@ -370,7 +370,7 @@ GameObject:
   - component: {fileID: -8130552927952781394}
   m_Layer: 0
   m_Name: Bus_2
-  m_TagString: Untagged
+  m_TagString: Car
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -393,6 +393,7 @@ Transform:
   - {fileID: 4890977168923924}
   - {fileID: 4209524850194694}
   - {fileID: 4742112200795446}
+  - {fileID: 961837325746268351}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-7559018209146976945
@@ -407,9 +408,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f824657b65978543ad0e9696861b3b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarMoviment
-  speed: 10
+  speed: 20
   despawnTime: 7
   remainingTime: 0
+  isStaticCar: 0
 --- !u!54 &-7185347746907131811
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -418,7 +420,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1959030373088092}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 10
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -456,8 +458,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1.0992069, z: 3.7133806}
-  m_Center: {x: 0, y: 0.5708956, z: -0.18553773}
+  m_Size: {x: 1, y: 1.0992069, z: 3.9929543}
+  m_Center: {x: 0, y: 0.5708956, z: -0.04575119}
 --- !u!1 &1984030507710860
 GameObject:
   m_ObjectHideFlags: 0
@@ -547,3 +549,56 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6341794003696192371
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 961837325746268351}
+  - component: {fileID: 6929927287177062827}
+  m_Layer: 0
+  m_Name: Carback
+  m_TagString: CarBack
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &961837325746268351
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6341794003696192371}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.569, z: -2.429}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4353972167979376}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6929927287177062827
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6341794003696192371}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
