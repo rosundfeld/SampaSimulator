@@ -7,6 +7,9 @@ TagManager:
   - Car
   - Semaphore
   - CarBack
+  - Jogar
+  - Sair
+  - Creditos
   layers:
   - Default
   - TransparentFX
@@ -14,7 +17,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - MainCameraLayer
   - whatIsPlayer
   - 
   - 
