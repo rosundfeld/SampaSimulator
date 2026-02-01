@@ -9,9 +9,9 @@ public class CarMoviment : MonoBehaviour
 	public float speed = 10f;
 
 	[Tooltip("Tempo (s) até destruir automaticamente. <= 0 desativa destruição automática")]
-	public float despawnTime = 100f;
+	public float despawnTime = 10000000f;
 
-	public float remainingTime;
+	//public float remainingTime;
 	public bool isStaticCar = false;
 
     // Rastreia Colliders que entraram no trigger — permite checar .enabled e .gameObject.activeInHierarchy
@@ -23,8 +23,6 @@ public class CarMoviment : MonoBehaviour
     void Start()
 	{
         defaultSpeed = speed;
-        if (!isStaticCar)
-            remainingTime = despawnTime;
     }
 
 	void FixedUpdate()
@@ -42,12 +40,12 @@ public class CarMoviment : MonoBehaviour
     void Update()
 	{
 		// Contador simples de despawn
-		if (remainingTime > 0f && !isStaticCar)
-		{
-			remainingTime -= Time.deltaTime;
-			if (remainingTime <= 0f)
-				Destroy(gameObject);
-		}
+		//if (remainingTime > 0f && !isStaticCar)
+		//{
+		//	remainingTime -= Time.deltaTime;
+		//	if (remainingTime <= 0f)
+		//		Destroy(gameObject);
+		//}
 
         // Verifica colliders rastreados: se foram desabilitados ou destruídos,
         // trata como "exit" (OnTriggerExit pode não ser chamado quando collider é desabilitado)
@@ -76,7 +74,12 @@ public class CarMoviment : MonoBehaviour
         {
             HandleColliderEnter(collision);
         }
-    }
+
+		if (collision.CompareTag("Despawner"))
+		{
+			HandleDespawnColliderEnter(collision);
+		}
+	}
 
     private void OnTriggerExit(Collider collision)
     {
@@ -86,7 +89,16 @@ public class CarMoviment : MonoBehaviour
         }
     }
 
-    private void HandleColliderEnter(Collider col)
+	private void HandleDespawnColliderEnter(Collider col)
+	{
+		if (col == null) return;
+		if (trackedColliders.Add(col) && trackedColliders.Count == 1)
+		{
+			DespawnNow();
+		}
+	}
+
+	private void HandleColliderEnter(Collider col)
     {
         if (col == null) return;
         if (trackedColliders.Add(col) && trackedColliders.Count == 1)

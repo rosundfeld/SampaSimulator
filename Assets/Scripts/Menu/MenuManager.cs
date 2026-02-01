@@ -16,7 +16,7 @@ public class MyEnumEntryMaterial
 	public Material value;
 }
 
-[Serializable] // ADICIONADO
+[Serializable]
 public class MyEnumEntryGameObject
 {
 	public MenuItem key;
@@ -39,7 +39,7 @@ public class MenuManager : MonoBehaviour
 {
 	public Material glowMaterial;
 	public Material standardMaterial;
-	public List<MyEnumEntryGameObjectList> wordGameObject;     // agora serializável no Inspector
+	public List<MyEnumEntryGameObjectList> wordGameObject;
 
 	void Start() { }
 
