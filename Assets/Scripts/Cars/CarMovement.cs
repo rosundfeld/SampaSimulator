@@ -9,7 +9,7 @@ public class CarMoviment : MonoBehaviour
 	public float speed = 10f;
 
 	[Tooltip("Tempo (s) até destruir automaticamente. <= 0 desativa destruição automática")]
-	public float despawnTime = 10000000f;
+	public float despawnTime = 0;
 
 	//public float remainingTime;
 	public bool isStaticCar = false;
@@ -39,13 +39,6 @@ public class CarMoviment : MonoBehaviour
 
     void Update()
 	{
-		// Contador simples de despawn
-		//if (remainingTime > 0f && !isStaticCar)
-		//{
-		//	remainingTime -= Time.deltaTime;
-		//	if (remainingTime <= 0f)
-		//		Destroy(gameObject);
-		//}
 
         // Verifica colliders rastreados: se foram desabilitados ou destruídos,
         // trata como "exit" (OnTriggerExit pode não ser chamado quando collider é desabilitado)
