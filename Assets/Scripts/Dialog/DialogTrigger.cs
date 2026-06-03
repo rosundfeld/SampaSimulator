@@ -26,6 +26,7 @@ public class Dialog
 public class DialogTrigger : MonoBehaviour
 {
     public Dialog dialogue;
+    public GameObject dialogBox;
 
     public void TriggerDialogue()
     {
@@ -36,7 +37,6 @@ public class DialogTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.gameObject.tag);
         if (other.CompareTag("Player"))
         {
             TriggerDialogue();
