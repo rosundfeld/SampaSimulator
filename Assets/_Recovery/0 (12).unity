@@ -5187,14 +5187,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 189371349}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.99999994, z: -0, w: -0.00043834798}
-  m_LocalPosition: {x: -10.83, y: 1.66, z: -38.237}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -20.10996, y: 1.66, z: -48.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1765820381}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -180.05, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &192042234
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52279,8 +52279,6 @@ GameObject:
   - component: {fileID: 1765820381}
   - component: {fileID: 1765820382}
   - component: {fileID: 1765820383}
-  - component: {fileID: 1765820385}
-  - component: {fileID: 1765820384}
   m_Layer: 0
   m_Name: GXF
   m_TagString: Untagged
@@ -52365,55 +52363,16 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 1084027107, guid: 221001eaa8cae874aabf0062bbc766f4, type: 3}
+  m_Sprite: {fileID: 1375996009, guid: 221001eaa8cae874aabf0062bbc766f4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1.46875}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
---- !u!95 &1765820384
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765820380}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8b2a41ee82c4c4244a7d39d0d3f0075f, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1765820385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765820380}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46595513759158d44b7f831fbc40bab6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpriteDirectionalController
-  backAngle: 65
-  sideAngle: 155
-  spriteRenderer: {fileID: 1765820383}
-  animator: {fileID: 1765820384}
-  mainTransform: {fileID: 189371351}
 --- !u!1001 &1767582284
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -66611,16 +66570,8 @@ PrefabInstance:
       value: 3.4783669
       objectReference: {fileID: 0}
     - target: {fileID: 3014156086211974570, guid: 22c39b105cfad734ca051c513197bfb2, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3014156086211974570, guid: 22c39b105cfad734ca051c513197bfb2, type: 3}
       propertyPath: m_Center.z
       value: 1.2391834
-      objectReference: {fileID: 0}
-    - target: {fileID: 3490731262399739507, guid: 22c39b105cfad734ca051c513197bfb2, type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3490731262399739507, guid: 22c39b105cfad734ca051c513197bfb2, type: 3}
       propertyPath: dialogue.dialogueLines.Array.size
