@@ -1,168 +1,214 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 using System.Collections;
 
 
 public class PlayerMovement : MonoBehaviour
 {
-    public static PlayerMovement Instance;
+    public static PlayerMovement Instance { get; private set; }
 
     [Header("Stats")]
-    public float maxStamina;
-    public float currentStamina;
-    public float staminaDrainRate;
-    public float staminaRegenRate;
-    public float minStaminaToRun;
-    public float regenDelay;
-    private float regenTimer;
+    [SerializeField] private float maxStamina;
+    [SerializeField] private float staminaDrainRate;
+    [SerializeField] private float staminaRegenRate;
+    [SerializeField] private float minStaminaToRun;
+    [SerializeField] private float regenDelay;
 
     [Header("UI")]
-    public UnityEngine.UI.Image staminaBar;
+    [SerializeField] private Image staminaBar;
 
     [Header("Movement")]
-    public float moveSpeed; // Speed of player movement
-    public float runningSpeed; // Speed of player movement
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float runningSpeed;
+    [SerializeField] private float airMultiplier;
+    [SerializeField] private float groundAcceleration = 40f;
+    [SerializeField] private float airAcceleration = 16f;
+    [SerializeField] private float jumpForce;
+    [FormerlySerializedAs("jumpColldown")]
+    [SerializeField] private float jumpCooldown;
+    [SerializeField] private float groundLinearDamping;
 
-    public float airMultiplier; // Multiplier for movement in the air
-    public float jumpForce;
-    public float jumpColldown;
-    public float groundLinearDamping;
-    bool readyToJump = true;
+    [Header("Step Assist")]
+    [SerializeField] private float stepCheckDistance = 0.35f;
+    [SerializeField] private float stepMaxHeight = 0.4f;
+    [SerializeField] private float stepLowerRayHeight = 0.05f;
+    [SerializeField] private float stepSmoothSpeed = 6f;
+    [SerializeField] private LayerMask stepMask;
+
+    [Header("Physics")]
+    [SerializeField] private bool autoConfigureRigidbody = true;
 
     [Header("Keybinds")]
-    public KeyCode jumpKey = KeyCode.Space;
-    public KeyCode runKey = KeyCode.LeftShift;
-
+    [SerializeField] private KeyCode jumpKey;
+    [SerializeField] private KeyCode runKey;
 
     [Header("Ground Check")]
-    public float playerHeigh;
-    public LayerMask whatIsGround;
-    bool grounded;
-    bool isRunning = false;
+    [FormerlySerializedAs("playerHeigh")]
+    [SerializeField] private float playerHeight;
+    [SerializeField] private LayerMask whatIsGround;
+
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
 
     [Header("Interaction")]
-    public bool isInteracting = false;
-    public float rotationSpeed = 5f;
+    [SerializeField] private float rotationSpeed;
 
-    public Transform orientation;
+    [Header("References")]
+    [SerializeField] private Transform orientation;
+    [SerializeField] private Rigidbody rb;
 
-    float horizontalInput;
-    float verticalInput;
+    public bool IsInteracting { get; private set; }
+    public float CurrentStamina => currentStamina;
 
-    Vector3 moveDirection;
+    private float currentStamina;
+    private float regenTimer;
+    private bool grounded;
+    private bool isRunning;
+    private bool readyToJump = true;
 
-    Rigidbody rb;
+    private float horizontalInput;
+    private float verticalInput;
+    private Vector3 moveDirection;
 
-	Coroutine hideCoroutine;
+    private Coroutine hideCoroutine;
 
-	private void Start()
+    private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-
-        currentStamina = maxStamina;
-
-        if (staminaBar != null)
+        if (Instance != null && Instance != this)
         {
-            staminaBar.fillAmount = currentStamina;
+            Destroy(gameObject);
+            return;
         }
 
-        rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true; // Prevents the Rigidbody from rotating due to physics
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        currentStamina = maxStamina;
+
+        if (rb == null)
+            rb = GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.freezeRotation = true;
+            if (autoConfigureRigidbody)
+            {
+                rb.interpolation = RigidbodyInterpolation.Interpolate;
+                rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            }
+        }
+
+        UpdateStaminaUI();
     }
 
     private void FixedUpdate()
     {
+        if (rb == null || orientation == null)
+            return;
+
         MovePlayer();
-        checkStamina();
+        TryStepAssist();
+        CheckStamina();
     }
 
     private void Update()
     {
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeigh * 0.5f + 0.5f, whatIsGround);
+        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.5f, whatIsGround);
 
-        MyInput();
-        //SpeedControl();
+        HandleInput();
+        UpdateMoveAnimationState();
+
+        if (rb == null)
+            return;
 
         if (grounded)
         {
             rb.linearDamping = groundLinearDamping;
         }
         else
+        {
             rb.linearDamping = 2;
+        }
     }
 
-    private void MyInput()
+    private bool HasMovementInput()
     {
-        // Get input from keyboard
+        return Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f;
+    }
+
+    private void UpdateMoveAnimationState()
+    {
+        if (animator == null)
+            return;
+
+        animator.SetBool("Running", HasMovementInput());
+    }
+
+    private void HandleInput()
+    {
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
 
-        if(Input.GetKey(jumpKey) && readyToJump && grounded)
+        if (Input.GetKey(jumpKey) && readyToJump && grounded)
         {
             readyToJump = false;
-
             Jump();
-
-            Invoke(nameof(ResetJump), jumpColldown); // Call ResetJump after jumpColldown seconds
+            Invoke(nameof(ResetJump), jumpCooldown);
         }
 
-        if (Input.GetKey(runKey) && CanRun())
+        isRunning = Input.GetKey(runKey) && CanRun() && HasMovementInput() && !IsInteracting;
+    }
+
+    private IEnumerator WaitToHideStamina()
+    {
+        yield return new WaitForSeconds(5f);
+
+        if (staminaBar != null)
+            staminaBar.gameObject.SetActive(false);
+
+        hideCoroutine = null;
+    }
+
+    private void CheckStamina()
+    {
+        if (staminaBar == null)
+            return;
+
+        if (isRunning)
         {
-            isRunning = true;
+            if (hideCoroutine != null)
+            {
+                StopCoroutine(hideCoroutine);
+                hideCoroutine = null;
+            }
+
+            staminaBar.gameObject.SetActive(true);
+            DrainStamina();
         }
         else
         {
-            isRunning = false;
+            if (hideCoroutine == null)
+            {
+                hideCoroutine = StartCoroutine(WaitToHideStamina());
+            }
+
+            RegenStamina();
         }
 
+        currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+        UpdateStaminaUI();
     }
-
-	IEnumerator WaitToHideStamina()
-	{
-		yield return new WaitForSeconds(5f);
-		staminaBar.gameObject.SetActive(false);
-		hideCoroutine = null; // Libera referência
-	}
-
-	private void checkStamina()
-    {
-		if (isRunning)
-		{
-			// Se o jogador começou a correr novamente, cancela qualquer tentativa de esconder
-			if (hideCoroutine != null)
-			{
-				StopCoroutine(hideCoroutine);
-				hideCoroutine = null;
-			}
-
-			staminaBar.gameObject.SetActive(true);
-			DrainStamina();
-		}
-		else
-		{
-			// Só inicia a coroutine se ainda não estiver rodando
-			if (hideCoroutine == null)
-			{
-				hideCoroutine = StartCoroutine(WaitToHideStamina());
-			}
-
-			RegenStamina();
-		}
-
-		currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
-
-		if (staminaBar != null)
-			staminaBar.fillAmount = currentStamina / maxStamina;
-	}
 
     private void DrainStamina()
     {
         currentStamina -= staminaDrainRate * Time.deltaTime;
-        regenTimer = 0f; // reseta o timer de regeneração
+        regenTimer = 0f;
     }
 
-    void RegenStamina()
+    private void RegenStamina()
     {
         if (currentStamina < maxStamina)
         {
@@ -176,42 +222,70 @@ public class PlayerMovement : MonoBehaviour
 
     public bool CanRun()
     {
-        return currentStamina > 0;
+        return currentStamina > minStaminaToRun;
+    }
+
+    public void SetInteracting(bool interacting)
+    {
+        IsInteracting = interacting;
+
+        if (interacting)
+            isRunning = false;
     }
 
     private void MovePlayer()
     {
-        // Calculate movement direction based on input and orientation
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        if(isInteracting == false)
+        if (IsInteracting)
+            return;
+
+        Vector3 desiredDirection = moveDirection.sqrMagnitude > 0.001f ? moveDirection.normalized : Vector3.zero;
+        float targetSpeed = isRunning ? runningSpeed : moveSpeed;
+        Vector3 targetHorizontalVelocity = desiredDirection * targetSpeed;
+
+        if (!grounded)
+            targetHorizontalVelocity *= airMultiplier;
+
+        Vector3 currentHorizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        float acceleration = grounded ? groundAcceleration : airAcceleration;
+        Vector3 smoothedHorizontalVelocity = Vector3.MoveTowards(
+            currentHorizontalVelocity,
+            targetHorizontalVelocity,
+            acceleration * Time.fixedDeltaTime);
+
+        rb.linearVelocity = new Vector3(smoothedHorizontalVelocity.x, rb.linearVelocity.y, smoothedHorizontalVelocity.z);
+    }
+
+    private void TryStepAssist()
+    {
+        if (!grounded)
+            return;
+
+        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        if (horizontalVelocity.sqrMagnitude < 0.01f)
+            return;
+
+        Vector3 stepDirection = horizontalVelocity.normalized;
+        Vector3 lowerOrigin = transform.position + Vector3.up * stepLowerRayHeight;
+        Vector3 upperOrigin = transform.position + Vector3.up * stepMaxHeight;
+
+        int mask = stepMask == 0 ? whatIsGround : stepMask;
+
+        bool blockedLow = Physics.Raycast(lowerOrigin, stepDirection, out RaycastHit lowerHit, stepCheckDistance, mask, QueryTriggerInteraction.Ignore);
+        bool blockedHigh = Physics.Raycast(upperOrigin, stepDirection, stepCheckDistance, mask, QueryTriggerInteraction.Ignore);
+
+        if (blockedLow && !blockedHigh && lowerHit.normal.y < 0.2f)
         {
-            if (isRunning)
-            {
-                if (grounded)
-                {
-                    rb.AddForce(moveDirection.normalized * runningSpeed * 10f, ForceMode.Force);
-
-                }
-                else if(!grounded)
-                {
-                    rb.AddForce(moveDirection.normalized * runningSpeed * 10f * airMultiplier, ForceMode.Force);
-                }
-
-            }
-            else
-            {
-                if (grounded)
-                {
-                    rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-
-                }
-                else if (!grounded)
-                {
-                    rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
-                }
-            }
+            Vector3 stepOffset = Vector3.up * (stepSmoothSpeed * Time.fixedDeltaTime);
+            rb.MovePosition(rb.position + stepOffset);
         }
+    }
+
+    private void UpdateStaminaUI()
+    {
+        if (staminaBar != null && maxStamina > 0f)
+            staminaBar.fillAmount = currentStamina / maxStamina;
     }
 
     public void RotateTowardsTarget(Transform target)
@@ -219,32 +293,22 @@ public class PlayerMovement : MonoBehaviour
         Transform playerObj = GetComponentInChildren<Transform>();
         if (playerObj != null && playerObj.name == "PlayerObj")
         {
-            Vector3 direction = (target.position - playerObj.position).normalized; // Direção para o alvo
-            Quaternion lookRotation = Quaternion.LookRotation(direction); // Calcula a rotação necessária
+            Vector3 direction = (target.position - playerObj.position).normalized;
+            direction.y = 0f;
+
+            if (direction.sqrMagnitude < 0.001f)
+                return;
+
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
             playerObj.rotation = Quaternion.Slerp(playerObj.rotation, lookRotation, Time.deltaTime * rotationSpeed);
-        }
-       
-    }
-
-    private void SpeedControl()
-    {
-        Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-
-        // Limit velocity if needed
-        if(flatVel.magnitude > moveSpeed && !isRunning)
-        {
-            Vector3 limitedVel = flatVel.normalized * moveSpeed;
-            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
-        } else
-        {
-            Vector3 limitedVel = flatVel.normalized * runningSpeed;
-            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
         }
     }
 
     private void Jump()
     {
-        // reset y velocity, revents jump height from increasing if jump button is pressed multiple times in air
+        if (rb == null)
+            return;
+
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }

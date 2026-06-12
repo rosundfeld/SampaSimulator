@@ -47,7 +47,7 @@ public class ThirdPersonCam : MonoBehaviour
 
     public void CheckIfPlayerHasInteraction()
     {
-        if (PlayerMovement.Instance.isInteracting)
+        if (PlayerMovement.Instance != null && PlayerMovement.Instance.IsInteracting)
         {
             LockCamera();
         } else

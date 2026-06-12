@@ -12,6 +12,7 @@ public class DialogManager : MonoBehaviour
     public TextMeshProUGUI characterName;
     public TextMeshProUGUI dialogArea;
 	private Queue<DialogLine> lines = new Queue<DialogLine>();
+    private GameObject dialogBox;
 
     public bool isDialogActive = false;
 
@@ -19,14 +20,16 @@ public class DialogManager : MonoBehaviour
 
     public Animator animator;
 
-    void Start()
+    private void Awake()
     {
         if (Instance == null)
             Instance = this;
     }
 
-    public void StartDialog(Dialog dialogue)
+    public void StartDialog(Dialog dialogue, GameObject dialogBox)
     {
+        this.dialogBox = dialogBox;
+        this.dialogBox.SetActive(true);
         isDialogActive = true;
 
 		animator.Play("show");
@@ -77,8 +80,16 @@ public class DialogManager : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        PlayerMovement.Instance.isInteracting = false;
+		if (PlayerMovement.Instance != null)
+			PlayerMovement.Instance.SetInteracting(false);
 		isDialogActive = false;
         animator.Play("hide");
+        StartCoroutine(HideDialogBoxAfterDelay());
+    }
+
+    IEnumerator<WaitForSeconds> HideDialogBoxAfterDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        this.dialogBox.SetActive(false);
     }
 }

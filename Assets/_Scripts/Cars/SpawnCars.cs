@@ -7,11 +7,12 @@ public class SpawnCars : MonoBehaviour
 {
 	public List<GameObject> CarList;
 	public float spawnInterval = 0f;
+	public float spawnRange = 10f;
 
 	private Coroutine spawnCoroutine;
 	public bool isSpawning = false;
 
-    // Armazena os GameObjects dos carros que estão atualmente dentro do collider
+    // Armazena os GameObjects dos carros que estï¿½o atualmente dentro do collider
     private HashSet<GameObject> carsInCollider = new HashSet<GameObject>();
 
 
@@ -87,8 +88,8 @@ public class SpawnCars : MonoBehaviour
 				Instantiate(CarList[Random.Range(0, CarList.Count)], transform.position, transform.rotation);
 			}
 
-            // Decide próximo intervalo e espera
-            spawnInterval = Random.Range(1f, 10f);
+            // Decide prï¿½ximo intervalo e espera
+            spawnInterval = Random.Range(1f, spawnRange);
         }
 	}
 }
