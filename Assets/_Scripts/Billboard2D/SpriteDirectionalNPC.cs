@@ -5,13 +5,15 @@ public class SpriteDirectionalNPC : MonoBehaviour
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] Animator animator;
 
+    [SerializeField] bool hasTwoAniamations = false;
+
+
     [SerializeField] Transform mainTransform;
 
-    [SerializeField] float backAngle = 65f;
-    [SerializeField] float sideAngle = 155f;
+    [Range(0f, 180f)][SerializeField] float backAngle = 65f;
+    [Range(0f, 180f)][SerializeField] float sideAngle = 155f;
 
 
-    private Vector2 lastMoveDir = new Vector2(0f, -1f); // direção inicial (ajuste se qu
     void LateUpdate()
     {
         if (Camera.main == null) return;
@@ -19,7 +21,8 @@ public class SpriteDirectionalNPC : MonoBehaviour
         SpriteDirectional();
 
     }
-    private void SpriteDirectional() {
+    private void SpriteDirectional()
+    {
 
         Vector3 cameraForwardVector = new Vector3(Camera.main.transform.forward.x, 0f, Camera.main.transform.forward.z);
 
@@ -36,7 +39,22 @@ public class SpriteDirectionalNPC : MonoBehaviour
         }
         else if (angle < sideAngle)
         {
-            animationDirection = new Vector2(Mathf.Sign(signedAngle), 0f); // Lados
+            if (hasTwoAniamations)
+            {
+                if (signedAngle < 0f)
+                    animationDirection = new Vector2(-1f, 0f);
+                else
+                    animationDirection = new Vector2(1f, 0f);
+            }
+            else
+            {
+                animationDirection = new Vector2(Mathf.Sign(signedAngle), 0f); // Lados
+
+                if (signedAngle < 0f)
+                    spriteRenderer.flipX = false;
+                else
+                    spriteRenderer.flipX = true;
+            }
         }
         else
         {
