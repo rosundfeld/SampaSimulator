@@ -6,9 +6,9 @@
   - Tags:
     - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Car, Semaphore, CarBack, Jogar, Sair, Creditos, Despawner
   - Layers:
-    - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall
+    - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall, Buildings, Miscs
 - Active game object:
-  - Name: Chicao
-  - Tag: Untagged
+  - Name: GXF
+  - Tag: Player
   - Layer: whatIsPlayer
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

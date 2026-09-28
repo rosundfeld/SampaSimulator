@@ -16,7 +16,7 @@ public class SaveManager : MonoBehaviour
     private IEnumerator LoadAfterInit()
     {
         yield return null;
-        LoadGame();
+        //LoadGame();
     }
 
     public void Register(IDataPersistence dataPersistence)

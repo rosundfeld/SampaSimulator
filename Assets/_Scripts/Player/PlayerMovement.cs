@@ -1,7 +1,9 @@
+
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
 using System.Collections;
+using System;
 
 
 public class PlayerMovement : MonoBehaviour
@@ -38,6 +40,8 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Physics")]
     [SerializeField] private bool autoConfigureRigidbody = true;
+    [SerializeField] private float playerRadius = 1.8f; // Ensure player radius is not zero or negative
+    [SerializeField] private LayerMask collisionsLayerMask;
 
     [Header("Keybinds")]
     [SerializeField] private KeyCode jumpKey;
@@ -64,6 +68,7 @@ public class PlayerMovement : MonoBehaviour
     private float currentStamina;
     private float regenTimer;
     private bool grounded;
+    private bool isWalking;
     private bool isRunning;
     private bool readyToJump = true;
 
@@ -86,6 +91,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        GameInput.Instance.OnJumpPressed += GameInput_OnJumpPressed;
+        GameInput.Instance.OnSprintPressed += GameInput_OnSprintPressed;
+
         currentStamina = maxStamina;
 
         if (rb == null)
@@ -149,17 +157,27 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleInput()
     {
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        Vector2 movement = GameInput.Instance.GetMovementVectorNormalized();
+        horizontalInput = movement.x;
+        verticalInput = movement.y;
+    }
 
-        if (Input.GetKey(jumpKey) && readyToJump && grounded)
+    private void GameInput_OnSprintPressed(object sender, EventArgs e)
+    {
+        if (CanRun() && HasMovementInput() && !IsInteracting)
+        {
+            isRunning = true;
+        }
+    }
+
+    private void GameInput_OnJumpPressed(object sender, EventArgs e)
+    {
+        if (readyToJump && grounded)
         {
             readyToJump = false;
             Jump();
             Invoke(nameof(ResetJump), jumpCooldown);
         }
-
-        isRunning = Input.GetKey(runKey) && CanRun() && HasMovementInput() && !IsInteracting;
     }
 
     private IEnumerator WaitToHideStamina()
