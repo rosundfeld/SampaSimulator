@@ -8,7 +8,7 @@
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall, Buildings, Miscs
 - Active game object:
-  - Name: GXF
+  - Name: Player2D
   - Tag: Player
   - Layer: whatIsPlayer
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

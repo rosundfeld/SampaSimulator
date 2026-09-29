@@ -93730,7 +93730,7 @@ PrefabInstance:
       objectReference: {fileID: 6029020367617209637}
     - target: {fileID: 5300749686668200742, guid: 857fd38d4b92e9743b85ed3147da95df, type: 3}
       propertyPath: moveSpeed
-      value: 20
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 5300749686668200742, guid: 857fd38d4b92e9743b85ed3147da95df, type: 3}
       propertyPath: maxStamina
