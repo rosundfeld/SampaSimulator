@@ -94,7 +94,8 @@ public class EventClick : MonoBehaviour, IPointerClickHandler, IPointerUpHandler
                 }
             }
 
-            bool isLastItem = i == lastIndex;
+            //LastItem on the list is the background
+            bool isLastItem = i == lastIndex;   
             if (isHover)
             {
                 renderer.material = isLastItem ? hoverMaterial : letterHoverMaterial;

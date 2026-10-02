@@ -88,6 +88,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1160819966182104
 GameObject:
@@ -177,6 +178,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1646981259178978
 GameObject:
@@ -190,7 +192,7 @@ GameObject:
   - component: {fileID: 5804721352056467217}
   - component: {fileID: -7882871949093050177}
   - component: {fileID: 5426217404651759059}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Car_1
   m_TagString: Car
   m_Icon: {fileID: 0}
@@ -232,7 +234,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CarMoviment
   speed: 20
   despawnTime: 7
-  remainingTime: 0
   isStaticCar: 0
 --- !u!54 &-7882871949093050177
 Rigidbody:
@@ -370,6 +371,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1720468467844398
 GameObject:
@@ -459,6 +461,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1995907943609020
 GameObject:
@@ -548,6 +551,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &4977342270407238125
 GameObject:

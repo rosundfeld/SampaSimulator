@@ -6,9 +6,9 @@
   - Tags:
     - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Car, Semaphore, CarBack, Jogar, Sair, Creditos, Despawner
   - Layers:
-    - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall
+    - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall, Buildings, Miscs, Cars, NPCWalk, Obstacle
 - Active game object:
-  - Name: Chicao
+  - Name: Bush 2 prefab (3)
   - Tag: Untagged
-  - Layer: whatIsPlayer
+  - Layer: Obstacle
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

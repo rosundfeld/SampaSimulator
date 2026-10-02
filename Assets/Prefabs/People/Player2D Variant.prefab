@@ -121,12 +121,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteDirectionalController
   spriteRenderer: {fileID: 2359772698610503352}
   animator: {fileID: 7858439856486623166}
-  playerRb: {fileID: 8340336632715386718}
+  playerRb: {fileID: 6342499094636780915}
   moveThreshold: 0.05
   dampTime: 0.1
-  backAngle: 65
-  sideAngle: 155
-  mainTransform: {fileID: 775624385981028613}
+  minAnimatorSpeed: 0.5
+  maxAnimatorSpeed: 2.5
 --- !u!95 &7858439856486623166
 Animator:
   serializedVersion: 7
@@ -198,7 +197,7 @@ PrefabInstance:
       objectReference: {fileID: 4352818704404338856}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -20.67
+      value: -22.3
       objectReference: {fileID: 0}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalPosition.y
@@ -206,11 +205,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -49.95
+      value: -45.3
       objectReference: {fileID: 0}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalRotation.x
@@ -218,7 +217,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalRotation.z
@@ -230,7 +229,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -255,10 +254,13 @@ PrefabInstance:
       addedObject: {fileID: 5300749686668200742}
     - targetCorrespondingSourceObject: {fileID: 4026214129385021347, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8340336632715386718}
+      addedObject: {fileID: 1935191138845602028}
     - targetCorrespondingSourceObject: {fileID: 4026214129385021347, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 599327017953655009}
+      addedObject: {fileID: 6342499094636780915}
+    - targetCorrespondingSourceObject: {fileID: 4026214129385021347, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6334306805588580154}
   m_SourcePrefab: {fileID: 100100000, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
 --- !u!4 &775624385981028613 stripped
 Transform:
@@ -282,39 +284,60 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239b3d063abb523409c5abc3803100f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  maxStamina: 1
+  maxStamina: 10
   staminaDrainRate: 0.75
   staminaRegenRate: 0.5
   minStaminaToRun: 0.01
   regenDelay: 2
   staminaBar: {fileID: 0}
-  moveSpeed: 10
-  runningSpeed: 20
+  moveSpeed: 8
+  runningSpeed: 14
   airMultiplier: 0.4
   groundAcceleration: 40
   airAcceleration: 4
-  jumpForce: 5
+  jumpHeight: 1
   jumpCooldown: 0.25
-  groundLinearDamping: 5
+  coyoteTime: 0.12
+  jumpBufferTime: 0.12
+  fallGravityMultiplier: 2.5
+  lowJumpGravityMultiplier: 2
   stepCheckDistance: 0.35
   stepMaxHeight: 0.4
   stepLowerRayHeight: 0.05
   stepSmoothSpeed: 6
+  stepClearance: 0.1
   stepMask:
     serializedVersion: 2
     m_Bits: 1024
   autoConfigureRigidbody: 0
-  jumpKey: 32
-  runKey: 304
+  playerRadius: 0.7
+  collisionsLayerMask:
+    serializedVersion: 2
+    m_Bits: 28672
   playerHeight: 2
+  groundCheckRadius: 0.2
+  groundCheckDistance: 0.5
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 1024
-  animator: {fileID: 7858439856486623166}
+    m_Bits: 9216
   rotationSpeed: 5
   orientation: {fileID: 4352818704404338856}
-  rb: {fileID: 8340336632715386718}
---- !u!54 &8340336632715386718
+  playerObj: {fileID: 775624385981028613}
+  rb: {fileID: 6342499094636780915}
+--- !u!114 &1935191138845602028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371159292989341502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b56d5b6e81af25e47b1ca669a728b244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerPersistence
+  saveManager: {fileID: 0}
+--- !u!54 &6342499094636780915
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -338,11 +361,11 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 112
-  m_CollisionDetection: 2
---- !u!136 &599327017953655009
-CapsuleCollider:
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &6334306805588580154
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -359,8 +382,6 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.6813164
-  m_Height: 2.5415916
-  m_Direction: 1
-  m_Center: {x: 0.01, y: 0.01746273, z: -0.01}
+  serializedVersion: 3
+  m_Size: {x: 0.92255366, y: 2.3367176, z: 1}
+  m_Center: {x: -0.0013264418, y: -0.10233259, z: 4.9720867e-18}

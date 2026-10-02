@@ -760,7 +760,7 @@ TextureImporter:
       name: Chicao-Sheet_31
       rect:
         serializedVersion: 2
-        x: 992
+        x: 960
         y: 0
         width: 32
         height: 47
@@ -782,7 +782,7 @@ TextureImporter:
       name: Chicao-Sheet_32
       rect:
         serializedVersion: 2
-        x: 1024
+        x: 992
         y: 0
         width: 32
         height: 47

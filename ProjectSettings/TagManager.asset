@@ -24,11 +24,11 @@ TagManager:
   - 
   - whatIsGround
   - whatIsWall
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Buildings
+  - Miscs
+  - Cars
+  - NPCWalk
+  - Obstacle
   - 
   - 
   - 

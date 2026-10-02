@@ -62,6 +62,7 @@ public class DialogTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            TriggerDialogue();
             //PlayerMovement.Instance.SetInteracting(true);
             dialogAction.SetActive(true);
         }
