@@ -7,6 +7,8 @@ public class SpriteDirectionalController : MonoBehaviour
     [SerializeField] Rigidbody playerRb;
     [SerializeField] float moveThreshold = 0.05f;
     [SerializeField] float dampTime = 0.1f;
+    [SerializeField] float minAnimatorSpeed = 0.5f;
+    [SerializeField] float maxAnimatorSpeed = 2.5f;
 
 
     private Vector2 lastMoveDir = new Vector2(0f, -1f); // direção inicial (ajuste se qu
@@ -20,6 +22,11 @@ public class SpriteDirectionalController : MonoBehaviour
         vel.y = 0f;
         bool isMoving = vel.sqrMagnitude >= moveThreshold * moveThreshold;
         animator.SetBool("Running", isMoving);
+
+        // Sem isso a animação toca sempre no mesmo ritmo, independente da velocidade real (walk == sprint visualmente).
+        animator.speed = isMoving && PlayerMovement.Instance != null && PlayerMovement.Instance.MoveSpeed > 0.01f
+            ? Mathf.Clamp(vel.magnitude / PlayerMovement.Instance.MoveSpeed, minAnimatorSpeed, maxAnimatorSpeed)
+            : 1f;
 
         if (!isMoving)
         {

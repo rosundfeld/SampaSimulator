@@ -1,5 +1,4 @@
 using Unity.Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ThirdPersonCam : MonoBehaviour
@@ -9,12 +8,12 @@ public class ThirdPersonCam : MonoBehaviour
 
     [Header("References")]
     public Transform orientation; // The target the camera follows
-    public Transform player; // The pivot point for camera rotation
-    public Transform playerObj; // The pivot point for camera rotation
-    public Rigidbody rb;
 
-    public float rotationSpeed; // Speed of camera rotation
+    [SerializeField]
+    private Transform player; // The pivot point for camera rotation
+
     private Transform startCamPosition;
+    private FadeObstacle _currentFadeObstacle;
 
 
     private void Start()
@@ -29,20 +28,11 @@ public class ThirdPersonCam : MonoBehaviour
         CheckIfPlayerHasInteraction();
     }
 
+    // Only orients the camera-relative forward/right axes; player facing is owned by PlayerMovement.
     private void handleCamPosition()
     {
         Vector3 viewDir = player.position - new Vector3(transform.position.x, player.position.y, transform.position.z);
         orientation.forward = viewDir.normalized;
-
-        //rotate player object
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
-        Vector3 inputDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
-
-        if (inputDir != Vector3.zero)
-        {
-            playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
-        }
     }
 
     public void CheckIfPlayerHasInteraction()
@@ -50,7 +40,8 @@ public class ThirdPersonCam : MonoBehaviour
         if (PlayerMovement.Instance != null && PlayerMovement.Instance.IsInteracting)
         {
             LockCamera();
-        } else
+        }
+        else
         {
             UnlockCamera();
             handleCamPosition();

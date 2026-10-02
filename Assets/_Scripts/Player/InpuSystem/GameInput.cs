@@ -26,7 +26,8 @@ public class GameInput : MonoBehaviour
     //---------------EVENTS-----------------
     public event EventHandler OnInteractAction;
     public event EventHandler OnJumpPressed;
-    public event EventHandler OnSprintPressed;
+    public event EventHandler<bool> OnJumpHeldChanged;
+    public event EventHandler<bool> OnSprintStateChanged;
     public event EventHandler OnPauseAction;
 
 
@@ -47,7 +48,10 @@ public class GameInput : MonoBehaviour
         // playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed;
         // playerInputActions.Player.Pause.performed += Pause_performed;
         playerInputActions.Player.Jump.performed += Jump_performed;
-        playerInputActions.Player.Sprint.performed += Sprint_performed;
+        playerInputActions.Player.Jump.started += Jump_started;
+        playerInputActions.Player.Jump.canceled += Jump_canceled;
+        playerInputActions.Player.Sprint.started += Sprint_started;
+        playerInputActions.Player.Sprint.canceled += Sprint_canceled;
 
     }
 
@@ -56,9 +60,24 @@ public class GameInput : MonoBehaviour
         OnJumpPressed?.Invoke(this, EventArgs.Empty);
     }
 
-    private void Sprint_performed(InputAction.CallbackContext context)
+    private void Jump_started(InputAction.CallbackContext context)
     {
-        OnSprintPressed?.Invoke(this, EventArgs.Empty);
+        OnJumpHeldChanged?.Invoke(this, true);
+    }
+
+    private void Jump_canceled(InputAction.CallbackContext context)
+    {
+        OnJumpHeldChanged?.Invoke(this, false);
+    }
+
+    private void Sprint_started(InputAction.CallbackContext context)
+    {
+        OnSprintStateChanged?.Invoke(this, true);
+    }
+
+    private void Sprint_canceled(InputAction.CallbackContext context)
+    {
+        OnSprintStateChanged?.Invoke(this, false);
     }
 
     private void OnDestroy()
@@ -75,10 +94,6 @@ public class GameInput : MonoBehaviour
     public Vector2 GetMovementVectorNormalized()
     {
         Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
-        Debug.Log("Raw input vector: " + inputVector);
-
-        inputVector = inputVector.normalized;
-
-        return inputVector;
+        return inputVector.normalized;
     }
 }

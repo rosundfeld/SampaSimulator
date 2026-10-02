@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 33202598452609472}
   - component: {fileID: 23729058636220162}
   - component: {fileID: 65738914748616680}
-  m_Layer: 0
+  - component: {fileID: 2096913425170551685}
+  m_Layer: 13
   m_Name: bench
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,8 +111,29 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.0048629832, y: 0.01824317, z: 0.0078034145}
-  m_Center: {x: -0.0023328408, y: 0.0023600222, z: 0.003810867}
+  m_Size: {x: 0.0048629832, y: 0.01824317, z: 0.0040378827}
+  m_Center: {x: -0.0023328408, y: 0.0023600217, z: 0.0019281041}
+--- !u!65 &2096913425170551685
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1026490736275818}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.000876, y: 0.018243171, z: 0.0039803134}
+  m_Center: {x: -0.00033934927, y: 0.0023600224, z: 0.0057224273}
 --- !u!1 &1228088659953116
 GameObject:
   m_ObjectHideFlags: 0
@@ -138,7 +160,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.1500173, y: 2.1500173, z: 2.1500173}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4045102420147112}

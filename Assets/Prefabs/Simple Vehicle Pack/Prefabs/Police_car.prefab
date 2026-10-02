@@ -88,6 +88,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1231962720052080
 GameObject:
@@ -177,6 +178,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1255947835851222
 GameObject:
@@ -266,6 +268,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1395383510685086
 GameObject:
@@ -355,6 +358,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1646981259178978
 GameObject:
@@ -368,7 +372,7 @@ GameObject:
   - component: {fileID: 7999097509237900832}
   - component: {fileID: 662752565274865280}
   - component: {fileID: 7733994513027056652}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Police_car
   m_TagString: Car
   m_Icon: {fileID: 0}
@@ -410,7 +414,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CarMoviment
   speed: 20
   despawnTime: 7
-  remainingTime: 0
   isStaticCar: 0
 --- !u!54 &662752565274865280
 Rigidbody:
@@ -548,6 +551,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &3708095728827241647
 GameObject:

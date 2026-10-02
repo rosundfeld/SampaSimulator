@@ -8,6 +8,8 @@ using System;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private const string PlayerObjName = "PlayerObj";
+
     public static PlayerMovement Instance { get; private set; }
 
     [Header("Stats")]
@@ -26,51 +28,60 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float airMultiplier;
     [SerializeField] private float groundAcceleration = 40f;
     [SerializeField] private float airAcceleration = 16f;
-    [SerializeField] private float jumpForce;
+    [FormerlySerializedAs("jumpForce")]
+    [SerializeField] private float jumpHeight = 1.2f;
     [FormerlySerializedAs("jumpColldown")]
     [SerializeField] private float jumpCooldown;
-    [SerializeField] private float groundLinearDamping;
+
+    [Header("Jump Feel")]
+    [SerializeField] private float coyoteTime = 0.12f;
+    [SerializeField] private float jumpBufferTime = 0.12f;
+
+    [Header("Gravity")]
+    [SerializeField] private float fallGravityMultiplier = 2.5f;
+    [SerializeField] private float lowJumpGravityMultiplier = 2f;
 
     [Header("Step Assist")]
     [SerializeField] private float stepCheckDistance = 0.35f;
     [SerializeField] private float stepMaxHeight = 0.4f;
     [SerializeField] private float stepLowerRayHeight = 0.05f;
     [SerializeField] private float stepSmoothSpeed = 6f;
+    [SerializeField] private float stepClearance = 0.1f;
     [SerializeField] private LayerMask stepMask;
 
     [Header("Physics")]
     [SerializeField] private bool autoConfigureRigidbody = true;
-    [SerializeField] private float playerRadius = 1.8f; // Ensure player radius is not zero or negative
+    [SerializeField] private float playerRadius = 0.4f;
     [SerializeField] private LayerMask collisionsLayerMask;
-
-    [Header("Keybinds")]
-    [SerializeField] private KeyCode jumpKey;
-    [SerializeField] private KeyCode runKey;
 
     [Header("Ground Check")]
     [FormerlySerializedAs("playerHeigh")]
     [SerializeField] private float playerHeight;
+    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private float groundCheckDistance = 0.5f;
     [SerializeField] private LayerMask whatIsGround;
-
-    [Header("Animation")]
-    [SerializeField] private Animator animator;
 
     [Header("Interaction")]
     [SerializeField] private float rotationSpeed;
 
     [Header("References")]
     [SerializeField] private Transform orientation;
+    [SerializeField] private Transform playerObj;
     [SerializeField] private Rigidbody rb;
 
     public bool IsInteracting { get; private set; }
     public float CurrentStamina => currentStamina;
+    public float MoveSpeed => moveSpeed;
 
     private float currentStamina;
     private float regenTimer;
     private bool grounded;
-    private bool isWalking;
     private bool isRunning;
+    private bool wantsToRun;
+    private bool isJumpHeld;
     private bool readyToJump = true;
+    private float lastGroundedTime;
+    private float lastJumpPressedTime = float.NegativeInfinity;
 
     private float horizontalInput;
     private float verticalInput;
@@ -92,7 +103,8 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         GameInput.Instance.OnJumpPressed += GameInput_OnJumpPressed;
-        GameInput.Instance.OnSprintPressed += GameInput_OnSprintPressed;
+        GameInput.Instance.OnJumpHeldChanged += GameInput_OnJumpHeldChanged;
+        GameInput.Instance.OnSprintStateChanged += GameInput_OnSprintStateChanged;
 
         currentStamina = maxStamina;
 
@@ -102,6 +114,8 @@ public class PlayerMovement : MonoBehaviour
         if (rb != null)
         {
             rb.freezeRotation = true;
+            // MoveTowards already fully drives accel/decel; linearDamping would fight it and cap real speed below the configured target.
+            rb.linearDamping = 0f;
             if (autoConfigureRigidbody)
             {
                 rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -109,7 +123,22 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        if (playerObj == null)
+            playerObj = FindPlayerObjFallback();
+
         UpdateStaminaUI();
+    }
+
+    private Transform FindPlayerObjFallback()
+    {
+        foreach (Transform child in GetComponentsInChildren<Transform>(true))
+        {
+            if (child.name == PlayerObjName)
+                return child;
+        }
+
+        Debug.LogWarning($"PlayerMovement: nenhum filho chamado '{PlayerObjName}' encontrado. Atribua 'Player Obj' no Inspector.", this);
+        return null;
     }
 
     private void FixedUpdate()
@@ -117,42 +146,72 @@ public class PlayerMovement : MonoBehaviour
         if (rb == null || orientation == null)
             return;
 
+        UpdateGroundCheck();
+        UpdateRunningState();
+        HandleJump();
         MovePlayer();
+        ApplyExtraGravity();
         TryStepAssist();
         CheckStamina();
     }
 
     private void Update()
     {
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.5f, whatIsGround);
-
         HandleInput();
-        UpdateMoveAnimationState();
+    }
 
-        if (rb == null)
-            return;
+    private void UpdateGroundCheck()
+    {
+        grounded = Physics.SphereCast(
+            transform.position + Vector3.up * groundCheckRadius,
+            groundCheckRadius,
+            Vector3.down,
+            out _,
+            playerHeight * 0.5f + groundCheckDistance,
+            whatIsGround,
+            QueryTriggerInteraction.Ignore);
 
         if (grounded)
-        {
-            rb.linearDamping = groundLinearDamping;
-        }
-        else
-        {
-            rb.linearDamping = 2;
-        }
+            lastGroundedTime = Time.time;
+    }
+
+    private void UpdateRunningState()
+    {
+        bool canStartOrContinueRunning = isRunning ? currentStamina > 0f : CanRun();
+        isRunning = wantsToRun && HasMovementInput() && !IsInteracting && canStartOrContinueRunning;
+    }
+
+    private void ApplyExtraGravity()
+    {
+        if (grounded)
+            return;
+
+        float multiplier = rb.linearVelocity.y < 0f
+            ? fallGravityMultiplier
+            : (isJumpHeld ? 1f : lowJumpGravityMultiplier);
+
+        rb.AddForce(Physics.gravity * (multiplier - 1f), ForceMode.Acceleration);
+    }
+
+    private void HandleJump()
+    {
+        bool canJump = readyToJump
+            && grounded
+            && Time.time - lastGroundedTime <= coyoteTime
+            && Time.time - lastJumpPressedTime <= jumpBufferTime;
+
+        if (!canJump)
+            return;
+
+        readyToJump = false;
+        lastJumpPressedTime = float.NegativeInfinity;
+        Jump();
+        Invoke(nameof(ResetJump), jumpCooldown);
     }
 
     private bool HasMovementInput()
     {
         return Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f;
-    }
-
-    private void UpdateMoveAnimationState()
-    {
-        if (animator == null)
-            return;
-
-        animator.SetBool("Running", HasMovementInput());
     }
 
     private void HandleInput()
@@ -162,22 +221,19 @@ public class PlayerMovement : MonoBehaviour
         verticalInput = movement.y;
     }
 
-    private void GameInput_OnSprintPressed(object sender, EventArgs e)
+    private void GameInput_OnSprintStateChanged(object sender, bool pressed)
     {
-        if (CanRun() && HasMovementInput() && !IsInteracting)
-        {
-            isRunning = true;
-        }
+        wantsToRun = pressed;
     }
 
     private void GameInput_OnJumpPressed(object sender, EventArgs e)
     {
-        if (readyToJump && grounded)
-        {
-            readyToJump = false;
-            Jump();
-            Invoke(nameof(ResetJump), jumpCooldown);
-        }
+        lastJumpPressedTime = Time.time;
+    }
+
+    private void GameInput_OnJumpHeldChanged(object sender, bool held)
+    {
+        isJumpHeld = held;
     }
 
     private IEnumerator WaitToHideStamina()
@@ -246,9 +302,6 @@ public class PlayerMovement : MonoBehaviour
     public void SetInteracting(bool interacting)
     {
         IsInteracting = interacting;
-
-        if (interacting)
-            isRunning = false;
     }
 
     private void MovePlayer()
@@ -260,6 +313,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 desiredDirection = moveDirection.sqrMagnitude > 0.001f ? moveDirection.normalized : Vector3.zero;
         float targetSpeed = isRunning ? runningSpeed : moveSpeed;
+        desiredDirection = ResolveMoveDirection(desiredDirection, targetSpeed);
         Vector3 targetHorizontalVelocity = desiredDirection * targetSpeed;
 
         if (!grounded)
@@ -273,6 +327,51 @@ public class PlayerMovement : MonoBehaviour
             acceleration * Time.fixedDeltaTime);
 
         rb.linearVelocity = new Vector3(smoothedHorizontalVelocity.x, rb.linearVelocity.y, smoothedHorizontalVelocity.z);
+
+        RotatePlayerObjTowardsMovement(desiredDirection);
+    }
+
+    // Prevents pushing Rigidbody velocity into a blocked surface; falls back to sliding along a single axis, like a CharacterController would.
+    private Vector3 ResolveMoveDirection(Vector3 desiredDirection, float speed)
+    {
+        if (desiredDirection.sqrMagnitude < 0.0001f)
+            return desiredDirection;
+
+        float moveDistance = speed * Time.fixedDeltaTime;
+
+        if (CanMoveInDirection(desiredDirection, moveDistance))
+            return desiredDirection;
+
+        Vector3 directionX = new Vector3(desiredDirection.x, 0f, 0f).normalized;
+        if (Mathf.Abs(desiredDirection.x) > 0.5f && CanMoveInDirection(directionX, moveDistance))
+            return directionX;
+
+        Vector3 directionZ = new Vector3(0f, 0f, desiredDirection.z).normalized;
+        if (Mathf.Abs(desiredDirection.z) > 0.5f && CanMoveInDirection(directionZ, moveDistance))
+            return directionZ;
+
+        return Vector3.zero;
+    }
+
+    private bool CanMoveInDirection(Vector3 direction, float distance)
+    {
+        return !Physics.BoxCast(
+            transform.position,
+            Vector3.one * playerRadius,
+            direction,
+            Quaternion.identity,
+            distance,
+            collisionsLayerMask,
+            QueryTriggerInteraction.Ignore);
+    }
+
+    private void RotatePlayerObjTowardsMovement(Vector3 desiredDirection)
+    {
+        if (playerObj == null || desiredDirection.sqrMagnitude < 0.001f)
+            return;
+
+        Quaternion targetRotation = Quaternion.LookRotation(desiredDirection, Vector3.up);
+        playerObj.rotation = Quaternion.Slerp(playerObj.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
     }
 
     private void TryStepAssist()
@@ -292,8 +391,9 @@ public class PlayerMovement : MonoBehaviour
 
         bool blockedLow = Physics.Raycast(lowerOrigin, stepDirection, out RaycastHit lowerHit, stepCheckDistance, mask, QueryTriggerInteraction.Ignore);
         bool blockedHigh = Physics.Raycast(upperOrigin, stepDirection, stepCheckDistance, mask, QueryTriggerInteraction.Ignore);
+        bool ceilingBlocked = Physics.Raycast(transform.position, Vector3.up, stepMaxHeight + stepClearance, mask, QueryTriggerInteraction.Ignore);
 
-        if (blockedLow && !blockedHigh && lowerHit.normal.y < 0.2f)
+        if (blockedLow && !blockedHigh && !ceilingBlocked && lowerHit.normal.y < 0.2f)
         {
             Vector3 stepOffset = Vector3.up * (stepSmoothSpeed * Time.fixedDeltaTime);
             rb.MovePosition(rb.position + stepOffset);
@@ -308,18 +408,17 @@ public class PlayerMovement : MonoBehaviour
 
     public void RotateTowardsTarget(Transform target)
     {
-        Transform playerObj = GetComponentInChildren<Transform>();
-        if (playerObj != null && playerObj.name == "PlayerObj")
-        {
-            Vector3 direction = (target.position - playerObj.position).normalized;
-            direction.y = 0f;
+        if (playerObj == null)
+            return;
 
-            if (direction.sqrMagnitude < 0.001f)
-                return;
+        Vector3 direction = target.position - playerObj.position;
+        direction.y = 0f;
 
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            playerObj.rotation = Quaternion.Slerp(playerObj.rotation, lookRotation, Time.deltaTime * rotationSpeed);
-        }
+        if (direction.sqrMagnitude < 0.001f)
+            return;
+
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        playerObj.rotation = Quaternion.Slerp(playerObj.rotation, lookRotation, Time.deltaTime * rotationSpeed);
     }
 
     private void Jump()
@@ -327,12 +426,31 @@ public class PlayerMovement : MonoBehaviour
         if (rb == null)
             return;
 
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        float jumpVelocity = Mathf.Sqrt(2f * jumpHeight * Mathf.Abs(Physics.gravity.y));
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpVelocity, rb.linearVelocity.z);
     }
 
     private void ResetJump()
     {
         readyToJump = true;
     }
+
+    private void OnDrawGizmosSelected()
+    {
+        // Box used by ResolveMoveDirection's BoxCast; tune Player Radius until it matches the character's real footprint.
+        GizmosUtils.DrawWireBox(transform.position, Vector3.one * playerRadius * 2f, Color.cyan);
+
+        GizmosUtils.DrawSphereCast(
+            transform.position + Vector3.up * groundCheckRadius,
+            groundCheckRadius,
+            Vector3.down,
+            playerHeight * 0.5f + groundCheckDistance,
+            grounded ? Color.green : Color.red);
+
+        Vector3 lowerOrigin = transform.position + Vector3.up * stepLowerRayHeight;
+        Vector3 upperOrigin = transform.position + Vector3.up * stepMaxHeight;
+        GizmosUtils.DrawRay(lowerOrigin, transform.forward, stepCheckDistance, Color.yellow);
+        GizmosUtils.DrawRay(upperOrigin, transform.forward, stepCheckDistance, Color.magenta);
+    }
 }
+
