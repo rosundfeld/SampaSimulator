@@ -69,7 +69,6 @@ public class FadeObstacle : MonoBehaviour
         }
 
         float t = _fadeTimer / fadeDuration;
-        Debug.Log($"Fading from {_startAlpha} to {_targetAlpha} with t={t}");
         SetAlpha(Mathf.Lerp(_startAlpha, _targetAlpha, t));
     }
 

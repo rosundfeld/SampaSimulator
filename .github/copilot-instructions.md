@@ -4,11 +4,11 @@
 - Active scene:
   - Name: City
   - Tags:
-    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Car, Semaphore, CarBack, Jogar, Sair, Creditos, Despawner
+    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Car, Semaphore, CarBack, Jogar, Sair, Creditos, Despawner, NPC
   - Layers:
-    - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall, Buildings, Miscs, Cars, NPCWalk, Obstacle
+    - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall, Buildings, Miscs, Cars, NPC, Obstacle
 - Active game object:
-  - Name: Bush 2 prefab (3)
+  - Name: [Save Manager]
   - Tag: Untagged
-  - Layer: Obstacle
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

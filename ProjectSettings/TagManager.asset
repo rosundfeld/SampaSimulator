@@ -11,6 +11,7 @@ TagManager:
   - Sair
   - Creditos
   - Despawner
+  - NPC
   layers:
   - Default
   - TransparentFX
@@ -27,7 +28,7 @@ TagManager:
   - Buildings
   - Miscs
   - Cars
-  - NPCWalk
+  - NPC
   - Obstacle
   - 
   - 
