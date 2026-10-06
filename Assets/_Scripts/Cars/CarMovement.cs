@@ -5,31 +5,47 @@ using UnityEngine;
 
 public class CarMoviment : MonoBehaviour
 {
-	[Tooltip("Unidades por segundo")]
-	public float speed = 10f;
+	private const string TagCarBack = "CarBack";
+	private const string TagSemaphore = "Semaphore";
+	private const string TagDespawner = "Despawner";
+	private const string TagPlayer = "Player";
 
-	[Tooltip("Tempo (s) até destruir automaticamente. <= 0 desativa destruição automática")]
-	public float despawnTime = 0;
+	[Tooltip("Velocidade mÃ¡xima (unidades por segundo)")]
+	[SerializeField] private float speed = 10f;
 
-	//public float remainingTime;
-	public bool isStaticCar = false;
+	[Tooltip("AceleraÃ§Ã£o (unidades por segundoÂ²) ao sair do repouso")]
+	[SerializeField] private float acceleration = 5f;
 
-    // Rastreia Colliders que entraram no trigger — permite checar .enabled e .gameObject.activeInHierarchy
+	[Tooltip("Tags que contam como atropelamento")]
+	[SerializeField] private string[] hitTags = { TagPlayer };
+
+	[Tooltip("Tempo (s) atÃ© destruir automaticamente. <= 0 desativa destruiÃ§Ã£o automÃ¡tica")]
+	[SerializeField] private float despawnTime = 0f;
+
+	[SerializeField] private bool isStaticCar = false;
+
+    // Rastreia Colliders que entraram no trigger ï¿½ permite checar .enabled e .gameObject.activeInHierarchy
     private HashSet<Collider> trackedColliders = new HashSet<Collider>();
 
-    // Guarda velocidade original para restaurar
-    private float defaultSpeed;
+    // Velocidade atual; sobe gradualmente atÃ© 'speed' (mÃ¡xima)
+    private float currentSpeed;
 
     void Start()
 	{
-        defaultSpeed = speed;
+        currentSpeed = speed;
     }
 
 	void FixedUpdate()
 	{
-		// Movimento frame-rate independent
-		if (!isStaticCar)
-            transform.Translate(Vector3.forward * speed * Time.fixedDeltaTime, Space.Self);
+		if (isStaticCar) return;
+
+		// Parado enquanto houver colliders bloqueando; senÃ£o acelera atÃ© a mÃ¡xima
+		if (trackedColliders.Count > 0)
+			currentSpeed = 0f;
+		else
+			currentSpeed = Mathf.MoveTowards(currentSpeed, speed, acceleration * Time.fixedDeltaTime);
+
+		transform.Translate(Vector3.forward * currentSpeed * Time.fixedDeltaTime, Space.Self);
 	}
 
     void OnDisable()
@@ -40,11 +56,11 @@ public class CarMoviment : MonoBehaviour
     void Update()
 	{
 
-        // Verifica colliders rastreados: se foram desabilitados ou destruídos,
-        // trata como "exit" (OnTriggerExit pode não ser chamado quando collider é desabilitado)
+        // Verifica colliders rastreados: se foram desabilitados ou destruï¿½dos,
+        // trata como "exit" (OnTriggerExit pode nï¿½o ser chamado quando collider ï¿½ desabilitado)
         if (trackedColliders.Count > 0)
         {
-            // Criar lista para evitar modificar HashSet durante iteração
+            // Criar lista para evitar modificar HashSet durante iteraï¿½ï¿½o
             var copy = trackedColliders.ToList();
             foreach (var col in copy)
             {
@@ -63,20 +79,34 @@ public class CarMoviment : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.CompareTag("CarBack") || collision.CompareTag("Semaphore"))
+        if (collision.CompareTag(TagCarBack) || collision.CompareTag(TagSemaphore))
         {
             HandleColliderEnter(collision);
         }
 
-		if (collision.CompareTag("Despawner"))
+		if (collision.CompareTag(TagDespawner))
 		{
 			HandleDespawnColliderEnter(collision);
 		}
+
+		if (!isStaticCar && currentSpeed >= speed && IsHitTarget(collision))
+		{
+			Debug.Log("Atropelou");
+		}
+	}
+
+	private bool IsHitTarget(Collider col)
+	{
+		foreach (var tag in hitTags)
+		{
+			if (col.CompareTag(tag)) return true;
+		}
+		return false;
 	}
 
     private void OnTriggerExit(Collider collision)
     {
-        if (collision.CompareTag("CarBack") || collision.CompareTag("Semaphore"))
+        if (collision.CompareTag(TagCarBack) || collision.CompareTag(TagSemaphore))
         {
             HandleColliderExit(collision);
         }
@@ -97,7 +127,7 @@ public class CarMoviment : MonoBehaviour
         if (trackedColliders.Add(col) && trackedColliders.Count == 1)
         {
             // primeiro collider dentro -> parar carro
-            this.speed = 0f;
+            currentSpeed = 0f;
         }
     }
 
@@ -109,10 +139,5 @@ public class CarMoviment : MonoBehaviour
         else
             trackedColliders.RemoveWhere(c => c == null);
 
-        if (trackedColliders.Count == 0)
-        {
-            // nenhum collider restante -> retomar velocidade original
-            this.speed = defaultSpeed;
-        }
     }
 }

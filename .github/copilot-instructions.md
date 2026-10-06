@@ -8,7 +8,7 @@
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall, Buildings, Miscs, Cars, NPC, Obstacle
 - Active game object:
-  - Name: [Save Manager]
-  - Tag: Untagged
+  - Name: CarDespawner (5)
+  - Tag: Despawner
   - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
