@@ -46,13 +46,12 @@ public class GameInput : MonoBehaviour
 
         // playerInputActions.Player.Interact.performed += Interact_performed;
         // playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed;
-        // playerInputActions.Player.Pause.performed += Pause_performed;
+        playerInputActions.Player.Pause.performed += Pause_performed;
         playerInputActions.Player.Jump.performed += Jump_performed;
         playerInputActions.Player.Jump.started += Jump_started;
         playerInputActions.Player.Jump.canceled += Jump_canceled;
         playerInputActions.Player.Sprint.started += Sprint_started;
         playerInputActions.Player.Sprint.canceled += Sprint_canceled;
-
     }
 
     private void Jump_performed(InputAction.CallbackContext context)
@@ -84,9 +83,14 @@ public class GameInput : MonoBehaviour
     {
         // playerInputActions.Player.Interact.performed -= Interact_performed;
         // playerInputActions.Player.InteractAlternate.performed -= InteractAlternate_performed;
-        // playerInputActions.Player.Pause.performed -= Pause_performed;
+        playerInputActions.Player.Pause.performed -= Pause_performed;
 
         playerInputActions.Dispose(); // Dispose of the player input actions
+    }
+
+    private void Pause_performed(InputAction.CallbackContext context)
+    {
+        OnPauseAction?.Invoke(this, EventArgs.Empty);
     }
 
 

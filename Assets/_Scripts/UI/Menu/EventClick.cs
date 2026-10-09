@@ -31,7 +31,7 @@ public class EventClick : MonoBehaviour, IPointerClickHandler, IPointerUpHandler
         {
             case MenuItem.Jogar:
                 // Carrega a cena "City"
-                SceneManager.LoadScene("City");
+                Loader.Load(Loader.Scene.Game);
                 break;
             case MenuItem.Sair:
                 // Fecha o jogo
@@ -40,7 +40,7 @@ public class EventClick : MonoBehaviour, IPointerClickHandler, IPointerUpHandler
                 break;
             case MenuItem.Creditos:
                 // Carrega a cena "Credits"
-                SceneManager.LoadScene("Credits");
+                //Loader.Load(Loader.Scene.Credits);
                 break;
         }
     }

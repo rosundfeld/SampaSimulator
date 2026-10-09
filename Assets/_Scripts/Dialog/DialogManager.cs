@@ -34,8 +34,7 @@ public class DialogManager : MonoBehaviour
 
 		animator.Play("show");
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        CursorUtils.ShowCursor();
 
         lines.Clear();
 
@@ -78,8 +77,7 @@ public class DialogManager : MonoBehaviour
 
     public void EndDialog()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        CursorUtils.HideCursor();
 		if (PlayerMovement.Instance != null)
 			PlayerMovement.Instance.SetInteracting(false);
 		isDialogActive = false;

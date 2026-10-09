@@ -2,13 +2,13 @@
 - Project name: SampaSimulator
 - Unity version: Unity 6000.3.14f1
 - Active scene:
-  - Name: City
+  - Name: Game
   - Tags:
     - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Car, Semaphore, CarBack, Jogar, Sair, Creditos, Despawner, NPC
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall, Buildings, Miscs, Cars, NPC, Obstacle
 - Active game object:
-  - Name: CarDespawner (5)
-  - Tag: Despawner
-  - Layer: Default
+  - Name: DeathUI
+  - Tag: Untagged
+  - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

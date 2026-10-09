@@ -13,6 +13,9 @@ public class CarMoviment : MonoBehaviour
 	[Tooltip("Velocidade máxima (unidades por segundo)")]
 	[SerializeField] private float speed = 10f;
 
+    [Tooltip("Velocidade máxima (unidades por segundo)")]
+	[SerializeField] private float hitSpeed = 2f;
+
 	[Tooltip("Aceleração (unidades por segundo²) ao sair do repouso")]
 	[SerializeField] private float acceleration = 5f;
 
@@ -89,9 +92,9 @@ public class CarMoviment : MonoBehaviour
 			HandleDespawnColliderEnter(collision);
 		}
 
-		if (!isStaticCar && currentSpeed >= speed && IsHitTarget(collision))
+		if (!isStaticCar && currentSpeed >= hitSpeed && IsHitTarget(collision))
 		{
-			Debug.Log("Atropelou");
+			PlayerDeathManager.Instance?.Kill(PlayerDeathManager.DeathCause.Car);
 		}
 	}
 
