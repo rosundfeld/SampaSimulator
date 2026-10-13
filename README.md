@@ -1,0 +1,21 @@
+PTBR
+
+<h1>Sampa Simulator/h1>
+<h5>Jogo de exploração e aventura pelas ruas de São Paulo na visão de uma pessoa que vive no interior.</h5>
+
+
+<strong>Features:</strong> Câmera Billboard aplicando um efeito 3D em Sprites 2D, Dialogo, NPCs NavMesh.
+
+
+EN
+<h1>Sampa Simulator/h1>
+<h5>An exploration and adventure game set on the streets of São Paulo, seen through the eyes of someone from a small town.</h5>
+
+
+<strong>Features:</strong> Billboard Camera applying a 3D effect on 2D Sprites, Dialogs, NPCs NavMesh.
+
+<img width="995" height="549" alt="image" src="https://github.com/user-attachments/assets/3d9a56e3-840d-4f46-bc7c-0affe2f913d5" />
+
+<img width="1189" height="598" alt="image" src="https://github.com/user-attachments/assets/c1a719d6-c6c7-40fd-bc03-f91d1d2346d1" />
+
+<img width="987" height="438" alt="image" src="https://github.com/user-attachments/assets/ab18c46c-00e8-4802-a05e-ccd3b361e59c" />
