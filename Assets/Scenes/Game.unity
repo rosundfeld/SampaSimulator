@@ -5487,6 +5487,10 @@ PrefabInstance:
       propertyPath: 'NpcList.Array.data[0]'
       value: 
       objectReference: {fileID: 1685542898247944045, guid: 1e430988854e30947964e172e61912e2, type: 3}
+    - target: {fileID: -124417488195321104, guid: 520e3a79a0019194db6a7b3c89eada51, type: 3}
+      propertyPath: 'prefabList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1685542898247944045, guid: 1e430988854e30947964e172e61912e2, type: 3}
     - target: {fileID: 515322733235193618, guid: 520e3a79a0019194db6a7b3c89eada51, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.77
@@ -6732,6 +6736,10 @@ PrefabInstance:
       propertyPath: 'NpcList.Array.data[0]'
       value: 
       objectReference: {fileID: 1685542898247944045, guid: 1e430988854e30947964e172e61912e2, type: 3}
+    - target: {fileID: -124417488195321104, guid: 520e3a79a0019194db6a7b3c89eada51, type: 3}
+      propertyPath: 'prefabList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1685542898247944045, guid: 1e430988854e30947964e172e61912e2, type: 3}
     - target: {fileID: 515322733235193618, guid: 520e3a79a0019194db6a7b3c89eada51, type: 3}
       propertyPath: m_LocalPosition.x
       value: -53.92
@@ -7939,9 +7947,10 @@ MonoBehaviour:
   characterIcon: {fileID: 1330586505}
   characterName: {fileID: 28381925}
   dialogArea: {fileID: 1375084023}
-  isDialogActive: 1
-  typingSpeed: 0.02
   animator: {fileID: 208950445}
+  typingSpeed: 0.02
+  hideDelay: 1
+  restartCooldown: 2
 --- !u!1001 &195443455
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15215,7 +15224,6 @@ GameObject:
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
   - component: {fileID: 330585548}
-  - component: {fileID: 330585549}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -15373,20 +15381,6 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
---- !u!114 &330585549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9f0154d592116243bdaf8f64a63ecf7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObstacleDetector
-  target: {fileID: 6029020367617209640}
-  cameraTransform: {fileID: 330585546}
 --- !u!1001 &331442185
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22518,7 +22512,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &481135861
 RectTransform:
   m_ObjectHideFlags: 0
@@ -45581,6 +45575,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -124417488195321104, guid: 520e3a79a0019194db6a7b3c89eada51, type: 3}
       propertyPath: 'NpcList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1685542898247944045, guid: 1e430988854e30947964e172e61912e2, type: 3}
+    - target: {fileID: -124417488195321104, guid: 520e3a79a0019194db6a7b3c89eada51, type: 3}
+      propertyPath: 'prefabList.Array.data[0]'
       value: 
       objectReference: {fileID: 1685542898247944045, guid: 1e430988854e30947964e172e61912e2, type: 3}
     - target: {fileID: 515322733235193618, guid: 520e3a79a0019194db6a7b3c89eada51, type: 3}
@@ -80930,7 +80928,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c56c2a0e432884293ca8a858bc6bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDeathManager
-  reloadDelay: 1.5
 --- !u!114 &1797431115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94193,8 +94190,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1979838452}
+  - component: {fileID: 1979838453}
   m_Layer: 5
-  m_Name: StaminaBar
+  m_Name: StaminaUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94220,6 +94218,20 @@ RectTransform:
   m_AnchoredPosition: {x: -0.0000076294, y: 0}
   m_SizeDelta: {x: 55.1818, y: 55.1818}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &1979838453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1979838451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f4244641a161844ead3525233db3a5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStaminaUI
+  barImage: {fileID: 481135862}
+  hideDelay: 5
 --- !u!1 &1983239426
 GameObject:
   m_ObjectHideFlags: 0
@@ -94540,6 +94552,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -124417488195321104, guid: 520e3a79a0019194db6a7b3c89eada51, type: 3}
       propertyPath: 'NpcList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1685542898247944045, guid: 1e430988854e30947964e172e61912e2, type: 3}
+    - target: {fileID: -124417488195321104, guid: 520e3a79a0019194db6a7b3c89eada51, type: 3}
+      propertyPath: 'prefabList.Array.data[0]'
       value: 
       objectReference: {fileID: 1685542898247944045, guid: 1e430988854e30947964e172e61912e2, type: 3}
     - target: {fileID: 515322733235193618, guid: 520e3a79a0019194db6a7b3c89eada51, type: 3}
@@ -99123,6 +99139,10 @@ PrefabInstance:
       propertyPath: GFX
       value: 
       objectReference: {fileID: 1653011063}
+    - target: {fileID: 7405600393240698651, guid: 96de7ce364f111848b67f848891a9ec5, type: 3}
+      propertyPath: gfx
+      value: 
+      objectReference: {fileID: 1653011063}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -99674,6 +99694,10 @@ PrefabInstance:
       propertyPath: hasTwoAniamations
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5246106400106359547, guid: b9a4ee71eada9f34fb3a0b94b2b88fc8, type: 3}
+      propertyPath: hasTwoSideAnimations
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5584205363344433256, guid: b9a4ee71eada9f34fb3a0b94b2b88fc8, type: 3}
       propertyPath: m_Camera
       value: 
@@ -99726,6 +99750,10 @@ PrefabInstance:
       propertyPath: dialogBox
       value: 
       objectReference: {fileID: 208950443}
+    - target: {fileID: 8933532186935610435, guid: b9a4ee71eada9f34fb3a0b94b2b88fc8, type: 3}
+      propertyPath: dialogWithoutInteraction
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8933532186935610435, guid: b9a4ee71eada9f34fb3a0b94b2b88fc8, type: 3}
       propertyPath: dialogue.dialogueLines.Array.data[0].line
       value: Tem um troco ai?
@@ -99813,11 +99841,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 857fd38d4b92e9743b85ed3147da95df, type: 3}
---- !u!4 &6029020367617209640 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 775624385981028613, guid: 857fd38d4b92e9743b85ed3147da95df, type: 3}
-  m_PrefabInstance: {fileID: 6029020367617209631}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8109961183335596328
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -100079,6 +100102,10 @@ PrefabInstance:
       propertyPath: dialogBox
       value: 
       objectReference: {fileID: 208950443}
+    - target: {fileID: 1967715209056837993, guid: 44cdc14af22b2a844a577a009b84e3d5, type: 3}
+      propertyPath: dialogWithoutInteraction
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1967715209056837993, guid: 44cdc14af22b2a844a577a009b84e3d5, type: 3}
       propertyPath: dialogue.dialogueLines.Array.data[0].line
       value: "Cidad\xE3o, essa rua est\xE1 interditada. Indicios de alta press\xE3o

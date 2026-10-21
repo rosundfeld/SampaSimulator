@@ -17,10 +17,12 @@ public class DialogManager : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private float typingSpeed = 0.2f;
     [SerializeField] private float hideDelay = 1f;
+    [SerializeField] private float restartCooldown = 2f;
 
     private readonly Queue<DialogLine> lines = new Queue<DialogLine>();
     private GameObject dialogBox;
     private bool isDialogActive;
+    private float lastDialogEndTime = float.NegativeInfinity;
 
     private void Awake()
     {
@@ -29,6 +31,9 @@ public class DialogManager : MonoBehaviour
 
     public void StartDialog(Dialog dialogue, GameObject dialogBox)
     {
+        if (!CanStartDialog())
+            return;
+            
         this.dialogBox = dialogBox;
         this.dialogBox.SetActive(true);
         isDialogActive = true;
@@ -62,9 +67,15 @@ public class DialogManager : MonoBehaviour
         StartCoroutine(TypeSentence(currentLine));
     }
 
+    public bool CanStartDialog()
+    {
+        return !isDialogActive && Time.time - lastDialogEndTime >= restartCooldown;
+    }
+
     public void EndDialog()
     {
         isDialogActive = false;
+        lastDialogEndTime = Time.time;
         CursorUtils.HideCursor();
         PlayerMovement.Instance.SetInteracting(false);
 
