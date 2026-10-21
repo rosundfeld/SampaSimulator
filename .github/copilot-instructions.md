@@ -2,13 +2,13 @@
 - Project name: SampaSimulator
 - Unity version: Unity 6000.3.14f1
 - Active scene:
-  - Name: City
+  - Name: Loading
   - Tags:
-    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Car, Semaphore, CarBack, Jogar, Sair, Creditos, Despawner
+    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Car, Semaphore, CarBack, Jogar, Sair, Creditos, Despawner, NPC
   - Layers:
-    - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall, Buildings, Miscs, Cars, NPCWalk, Obstacle
+    - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall, Buildings, Miscs, Cars, NPC, Obstacle
 - Active game object:
-  - Name: Bush 2 prefab (3)
-  - Tag: Untagged
-  - Layer: Obstacle
+  - Name: Main Camera
+  - Tag: MainCamera
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

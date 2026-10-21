@@ -1,109 +1,66 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
-using System.Collections.Generic;
 
-public interface IHoverable
+// Item 3D do menu principal: a ação é escolhida pelo nome do GameObject (Jogar / Sair / Creditos).
+public class EventClick : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    void OnHoverEnter();
-    void OnHoverExit();
-}
+    private const string PLAY_ITEM = "Jogar";
+    private const string QUIT_ITEM = "Sair";
+    private const string CREDITS_ITEM = "Creditos";
 
-public static class MenuItem
-{
-    public const string Jogar = "Jogar";
-    public const string Sair = "Sair";
-    public const string Creditos = "Creditos";
-}
+    [SerializeField] private Material letterMaterial;
+    [SerializeField] private Material letterHoverMaterial;
+    [SerializeField] private Material material;
+    [SerializeField] private Material hoverMaterial;
+    [Tooltip("Letras do item; o ÚLTIMO elemento da lista é o fundo")]
+    [SerializeField] private List<GameObject> menuLetters = new List<GameObject>();
 
-public class EventClick : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
-{
-
-    public Material letterMaterial;
-    public Material letterHoverMaterial;
-    public Material material;
-    public Material hoverMaterial;
-    public List<GameObject> menuLetters = new List<GameObject>();
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("Objeto clicado: " + gameObject.name);
         switch (gameObject.name)
         {
-            case MenuItem.Jogar:
-                // Carrega a cena "City"
-                SceneManager.LoadScene("City");
+            case PLAY_ITEM:
+                Loader.Load(Loader.Scene.Game);
                 break;
-            case MenuItem.Sair:
-                // Fecha o jogo
-                Debug.Log("Fechando o jogo");
+            case QUIT_ITEM:
                 Application.Quit();
                 break;
-            case MenuItem.Creditos:
-                // Carrega a cena "Credits"
-                SceneManager.LoadScene("Credits");
+            case CREDITS_ITEM:
+                // Cena de créditos ainda não existe.
                 break;
         }
     }
 
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        Debug.Log("Botão do mouse solto no objeto: " + gameObject.name);
-    }
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        Debug.Log("Botão do mouse pressionado no objeto: " + gameObject.name);
-    }
-
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("OnPointerEnter: " + gameObject.name);
         ApplyMenuMaterials(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("OnPointerExit: " + gameObject.name);
         ApplyMenuMaterials(false);
     }
 
     private void ApplyMenuMaterials(bool isHover)
     {
-        if (menuLetters == null || menuLetters.Count == 0)
-        {
-            return;
-        }
-
         int lastIndex = menuLetters.Count - 1;
 
         for (int i = 0; i < menuLetters.Count; i++)
         {
             GameObject letter = menuLetters[i];
             if (letter == null)
-            {
                 continue;
-            }
 
-            Renderer renderer = letter.GetComponent<Renderer>();
-            if (renderer == null)
-            {
-                renderer = letter.GetComponentInChildren<Renderer>();
-                if (renderer == null)
-                {
-                    continue;
-                }
-            }
+            Renderer letterRenderer = letter.GetComponentInChildren<Renderer>();
+            if (letterRenderer == null)
+                continue;
 
-            //LastItem on the list is the background
-            bool isLastItem = i == lastIndex;   
+            bool isBackground = i == lastIndex;
             if (isHover)
-            {
-                renderer.material = isLastItem ? hoverMaterial : letterHoverMaterial;
-            }
+                letterRenderer.material = isBackground ? hoverMaterial : letterHoverMaterial;
             else
-            {
-                renderer.material = isLastItem ? material : letterMaterial;
-            }
+                letterRenderer.material = isBackground ? material : letterMaterial;
         }
     }
 }

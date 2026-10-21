@@ -1,118 +1,100 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-public class CarMoviment : MonoBehaviour
+public class CarMovement : MonoBehaviour
 {
-	[Tooltip("Unidades por segundo")]
-	public float speed = 10f;
+	private const string CAR_BACK_TAG = "CarBack";
+	private const string SEMAPHORE_TAG = "Semaphore";
+	private const string DESPAWNER_TAG = "Despawner";
+	private const string PLAYER_TAG = "Player";
 
-	[Tooltip("Tempo (s) at� destruir automaticamente. <= 0 desativa destrui��o autom�tica")]
-	public float despawnTime = 0;
+	[Tooltip("Velocidade máxima (unidades por segundo)")]
+	[SerializeField] private float speed = 10f;
 
-	//public float remainingTime;
-	public bool isStaticCar = false;
+	[Tooltip("Velocidade mínima para que encostar no player conte como atropelamento")]
+	[SerializeField] private float hitSpeed = 2f;
 
-    // Rastreia Colliders que entraram no trigger � permite checar .enabled e .gameObject.activeInHierarchy
-    private HashSet<Collider> trackedColliders = new HashSet<Collider>();
+	[Tooltip("Aceleração (unidades por segundo²) ao sair do repouso")]
+	[SerializeField] private float acceleration = 5f;
 
-    // Guarda velocidade original para restaurar
-    private float defaultSpeed;
+	[Tooltip("Tags que contam como atropelamento")]
+	[SerializeField] private string[] hitTags = { PLAYER_TAG };
 
-    void Start()
+	[SerializeField] private bool isStaticCar = false;
+
+	// Colliders (traseira de outro carro / semáforo) que estão bloqueando este carro.
+	private readonly HashSet<Collider> blockingColliders = new HashSet<Collider>();
+
+	// Velocidade atual; sobe gradualmente até 'speed' (máxima)
+	private float currentSpeed;
+
+	private void Start()
 	{
-        defaultSpeed = speed;
-    }
-
-	void FixedUpdate()
-	{
-		// Movimento frame-rate independent
-		if (!isStaticCar)
-            transform.Translate(Vector3.forward * speed * Time.fixedDeltaTime, Space.Self);
+		currentSpeed = speed;
 	}
 
-    void OnDisable()
-    {
-        trackedColliders.Clear();
-    }
-
-    void Update()
+	private void Update()
 	{
-
-        // Verifica colliders rastreados: se foram desabilitados ou destru�dos,
-        // trata como "exit" (OnTriggerExit pode n�o ser chamado quando collider � desabilitado)
-        if (trackedColliders.Count > 0)
-        {
-            // Criar lista para evitar modificar HashSet durante itera��o
-            var copy = trackedColliders.ToList();
-            foreach (var col in copy)
-            {
-                if (col == null || !col.enabled || !col.gameObject.activeInHierarchy)
-                {
-                    HandleColliderExit(col);
-                }
-            }
-        }
-    }
-
-	public void DespawnNow()
-	{
-		Destroy(gameObject);
+		// OnTriggerExit não é chamado quando o collider é desativado/destruído (ex.: semáforo abrindo),
+		// então limpamos manualmente quem não está mais ativo.
+		blockingColliders.RemoveWhere(col => col == null || !col.enabled || !col.gameObject.activeInHierarchy);
 	}
 
-    private void OnTriggerEnter(Collider collision)
-    {
-        if (collision.CompareTag("CarBack") || collision.CompareTag("Semaphore"))
-        {
-            HandleColliderEnter(collision);
-        }
+	private void FixedUpdate()
+	{
+		if (isStaticCar)
+			return;
 
-		if (collision.CompareTag("Despawner"))
+		// Parado enquanto houver colliders bloqueando; senão acelera até a máxima
+		if (blockingColliders.Count > 0)
+			currentSpeed = 0f;
+		else
+			currentSpeed = Mathf.MoveTowards(currentSpeed, speed, acceleration * Time.fixedDeltaTime);
+
+		transform.Translate(Vector3.forward * currentSpeed * Time.fixedDeltaTime, Space.Self);
+	}
+
+	private void OnDisable()
+	{
+		blockingColliders.Clear();
+	}
+
+	private void OnTriggerEnter(Collider other)
+	{
+		if (IsBlockingCollider(other))
 		{
-			HandleDespawnColliderEnter(collision);
+			blockingColliders.Add(other);
+			currentSpeed = 0f;
 		}
-	}
 
-    private void OnTriggerExit(Collider collision)
-    {
-        if (collision.CompareTag("CarBack") || collision.CompareTag("Semaphore"))
-        {
-            HandleColliderExit(collision);
-        }
-    }
-
-	private void HandleDespawnColliderEnter(Collider col)
-	{
-		if (col == null) return;
-		if (trackedColliders.Add(col) && trackedColliders.Count == 1)
+		if (other.CompareTag(DESPAWNER_TAG))
 		{
-			DespawnNow();
+			Destroy(gameObject);
+			return;
 		}
+
+		if (!isStaticCar && currentSpeed >= hitSpeed && IsHitTarget(other))
+			PlayerDeathManager.Instance.Kill(PlayerDeathManager.DeathCause.Car);
 	}
 
-	private void HandleColliderEnter(Collider col)
-    {
-        if (col == null) return;
-        if (trackedColliders.Add(col) && trackedColliders.Count == 1)
-        {
-            // primeiro collider dentro -> parar carro
-            this.speed = 0f;
-        }
-    }
+	private void OnTriggerExit(Collider other)
+	{
+		if (IsBlockingCollider(other))
+			blockingColliders.Remove(other);
+	}
 
-    private void HandleColliderExit(Collider col)
-    {
-        // Remove (Remove trata nulls internamente; defensivamente verifica null)
-        if (col != null)
-            trackedColliders.Remove(col);
-        else
-            trackedColliders.RemoveWhere(c => c == null);
+	private bool IsBlockingCollider(Collider col)
+	{
+		return col.CompareTag(CAR_BACK_TAG) || col.CompareTag(SEMAPHORE_TAG);
+	}
 
-        if (trackedColliders.Count == 0)
-        {
-            // nenhum collider restante -> retomar velocidade original
-            this.speed = defaultSpeed;
-        }
-    }
+	private bool IsHitTarget(Collider col)
+	{
+		foreach (string hitTag in hitTags)
+		{
+			if (col.CompareTag(hitTag))
+				return true;
+		}
+		return false;
+	}
 }

@@ -371,7 +371,7 @@ GameObject:
   - component: {fileID: 4353972167979376}
   - component: {fileID: -7559018209146976945}
   - component: {fileID: -7185347746907131811}
-  - component: {fileID: -8130552927952781394}
+  - component: {fileID: -7380963701597940734}
   m_Layer: 13
   m_Name: Bus_2
   m_TagString: Car
@@ -414,6 +414,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarMoviment
   speed: 20
+  acceleration: 5
+  hitTags:
+  - Player
   despawnTime: 7
   isStaticCar: 0
 --- !u!54 &-7185347746907131811
@@ -443,7 +446,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &-8130552927952781394
+--- !u!65 &-7380963701597940734
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -462,8 +465,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1.0992069, z: 3.9929543}
-  m_Center: {x: 0, y: 0.5708956, z: -0.04575119}
+  m_Size: {x: 1, y: 1.1663822, z: 3.9520767}
+  m_Center: {x: 0, y: 0.5698015, z: -0.0037079812}
 --- !u!1 &1984030507710860
 GameObject:
   m_ObjectHideFlags: 0
