@@ -1,48 +1,51 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class DeathUI : MonoBehaviour
 {
-
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button tryAgainButton;
     [SerializeField] private TextMeshProUGUI deathDescription;
 
-     private void Start()
+    private void Awake()
     {
-        if (PlayerDeathManager.Instance != null)
+        mainMenuButton.onClick.AddListener(() =>
         {
-            PlayerDeathManager.onPlayerDeath += Player_OnAnyPlayerDeath;
-        }
+            Loader.Load(Loader.Scene.MainMenu);
+        });
+        tryAgainButton.onClick.AddListener(() =>
+        {
+            Loader.Load(Loader.Scene.Game);
+        });
+    }
 
-        mainMenuButton.onClick.AddListener(() => Loader.Load(Loader.Scene.MainMenu));
-        tryAgainButton.onClick.AddListener(() => Loader.Load(Loader.Scene.Game));
+    private void Start()
+    {
+        PlayerDeathManager.Instance.OnPlayerDeath += PlayerDeathManager_OnPlayerDeath;
 
         Hide();
     }
 
-    private void Player_OnAnyPlayerDeath(object sender, PlayerDeathManager.PlayerDeathData e)
+    private void PlayerDeathManager_OnPlayerDeath(object sender, PlayerDeathManager.OnPlayerDeathEventArgs e)
     {
+        deathDescription.text = GetDeathMessage(e.deathCause);
         Show();
-        deathDescription.text = $"Morreu de: {e.deathCause}";
     }
 
-   public void Show()
-   {
-       gameObject.SetActive(true);
-   }
+    private string GetDeathMessage(PlayerDeathManager.DeathCause deathCause)
+    {
+        // TODO(human): converter a causa da morte em uma mensagem para o jogador.
+        return $"Morreu de: {deathCause}";
+    }
 
-   public void Hide()
-   {
-       gameObject.SetActive(false);
-   }    
+    private void Show()
+    {
+        gameObject.SetActive(true);
+    }
 
-   private void OnDestroy()
-   {
-       if (PlayerDeathManager.Instance != null)
-       {
-           PlayerDeathManager.onPlayerDeath -= Player_OnAnyPlayerDeath;
-       }
-   }
+    private void Hide()
+    {
+        gameObject.SetActive(false);
+    }
 }

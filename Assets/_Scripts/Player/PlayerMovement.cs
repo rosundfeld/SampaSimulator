@@ -1,10 +1,6 @@
-
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Serialization;
-using System.Collections;
 using System;
-
+using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -12,15 +8,19 @@ public class PlayerMovement : MonoBehaviour
 
     public static PlayerMovement Instance { get; private set; }
 
+    public event EventHandler<OnStaminaChangedEventArgs> OnStaminaChanged;
+    public class OnStaminaChangedEventArgs : EventArgs
+    {
+        public float staminaNormalized;
+        public bool isDraining;
+    }
+
     [Header("Stats")]
     [SerializeField] private float maxStamina;
     [SerializeField] private float staminaDrainRate;
     [SerializeField] private float staminaRegenRate;
     [SerializeField] private float minStaminaToRun;
     [SerializeField] private float regenDelay;
-
-    [Header("UI")]
-    [SerializeField] private Image staminaBar;
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed;
@@ -87,16 +87,8 @@ public class PlayerMovement : MonoBehaviour
     private float verticalInput;
     private Vector3 moveDirection;
 
-    private Coroutine hideCoroutine;
-
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
         Instance = this;
     }
 
@@ -125,8 +117,6 @@ public class PlayerMovement : MonoBehaviour
 
         if (playerObj == null)
             playerObj = FindPlayerObjFallback();
-
-        UpdateStaminaUI();
     }
 
     private Transform FindPlayerObjFallback()
@@ -178,7 +168,7 @@ public class PlayerMovement : MonoBehaviour
     private void UpdateRunningState()
     {
         bool canStartOrContinueRunning = isRunning ? currentStamina > 0f : CanRun();
-        isRunning = wantsToRun && HasMovementInput() && !IsInteracting && canStartOrContinueRunning;
+        isRunning = wantsToRun && HasMovementInput() && CanMove() && canStartOrContinueRunning;
     }
 
     private void ApplyExtraGravity()
@@ -196,6 +186,7 @@ public class PlayerMovement : MonoBehaviour
     private void HandleJump()
     {
         bool canJump = readyToJump
+            && CanMove()
             && grounded
             && Time.time - lastGroundedTime <= coyoteTime
             && Time.time - lastJumpPressedTime <= jumpBufferTime;
@@ -236,44 +227,20 @@ public class PlayerMovement : MonoBehaviour
         isJumpHeld = held;
     }
 
-    private IEnumerator WaitToHideStamina()
-    {
-        yield return new WaitForSeconds(5f);
-
-        if (staminaBar != null)
-            staminaBar.gameObject.SetActive(false);
-
-        hideCoroutine = null;
-    }
-
     private void CheckStamina()
     {
-        if (staminaBar == null)
-            return;
-
         if (isRunning)
-        {
-            if (hideCoroutine != null)
-            {
-                StopCoroutine(hideCoroutine);
-                hideCoroutine = null;
-            }
-
-            staminaBar.gameObject.SetActive(true);
             DrainStamina();
-        }
         else
-        {
-            if (hideCoroutine == null)
-            {
-                hideCoroutine = StartCoroutine(WaitToHideStamina());
-            }
-
             RegenStamina();
-        }
 
         currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
-        UpdateStaminaUI();
+
+        OnStaminaChanged?.Invoke(this, new OnStaminaChangedEventArgs
+        {
+            staminaNormalized = maxStamina > 0f ? currentStamina / maxStamina : 0f,
+            isDraining = isRunning,
+        });
     }
 
     private void DrainStamina()
@@ -304,14 +271,18 @@ public class PlayerMovement : MonoBehaviour
         IsInteracting = interacting;
     }
 
+    // Diálogo, pause (timeScale 0) e game over bloqueiam o movimento por caminhos diferentes; centraliza a regra aqui.
+    private bool CanMove()
+    {
+        return !IsInteracting && GameManager.Instance.IsGamePlaying();
+    }
+
     private void MovePlayer()
     {
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        if (IsInteracting)
-            return;
-
-        Vector3 desiredDirection = moveDirection.sqrMagnitude > 0.001f ? moveDirection.normalized : Vector3.zero;
+        // Sem movimento permitido o alvo vira zero, então o player desacelera em vez de deslizar com a velocidade antiga.
+        Vector3 desiredDirection = CanMove() && moveDirection.sqrMagnitude > 0.001f ? moveDirection.normalized : Vector3.zero;
         float targetSpeed = isRunning ? runningSpeed : moveSpeed;
         desiredDirection = ResolveMoveDirection(desiredDirection, targetSpeed);
         Vector3 targetHorizontalVelocity = desiredDirection * targetSpeed;
@@ -398,12 +369,6 @@ public class PlayerMovement : MonoBehaviour
             Vector3 stepOffset = Vector3.up * (stepSmoothSpeed * Time.fixedDeltaTime);
             rb.MovePosition(rb.position + stepOffset);
         }
-    }
-
-    private void UpdateStaminaUI()
-    {
-        if (staminaBar != null && maxStamina > 0f)
-            staminaBar.fillAmount = currentStamina / maxStamina;
     }
 
     public void RotateTowardsTarget(Transform target)

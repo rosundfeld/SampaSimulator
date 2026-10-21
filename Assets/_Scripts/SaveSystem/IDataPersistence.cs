@@ -1,4 +1,3 @@
-
 public interface IDataPersistence
 {
     void LoadData(SaveData data);

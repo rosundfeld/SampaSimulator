@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class NavMesh : MonoBehaviour
+[RequireComponent(typeof(NavMeshAgent))]
+public class NPCWander : MonoBehaviour
 {
     [SerializeField] private float wanderRadius = 20f;
     [SerializeField] private float wanderInterval = 5f;
@@ -30,7 +31,7 @@ public class NavMesh : MonoBehaviour
         Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
         randomDirection += transform.position;
 
-        if (UnityEngine.AI.NavMesh.SamplePosition(randomDirection, out UnityEngine.AI.NavMeshHit hit, wanderRadius, UnityEngine.AI.NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, wanderRadius, NavMesh.AllAreas))
         {
             navMeshAgent.SetDestination(hit.position);
         }

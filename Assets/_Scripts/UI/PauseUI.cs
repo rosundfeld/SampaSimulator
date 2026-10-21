@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,42 +7,43 @@ public class PauseUI : MonoBehaviour
     [SerializeField] private Button menuButton;
     [SerializeField] private Button resumeButton;
 
-    private void Start()
+    private void Awake()
     {
-        menuButton.onClick.AddListener(() => { Loader.Load(Loader.Scene.MainMenu); });
+        menuButton.onClick.AddListener(() =>
+        {
+            Loader.Load(Loader.Scene.MainMenu);
+        });
         resumeButton.onClick.AddListener(() =>
         {
-            GameManager.Instance.setGamePaused(false);
-            HidePauseMenu();
+            GameManager.Instance.TogglePauseGame();
         });
+    }
 
+    private void Start()
+    {
         GameManager.Instance.OnGamePaused += GameManager_OnGamePaused;
         GameManager.Instance.OnGameUnpaused += GameManager_OnGameUnpaused;
 
-        HidePauseMenu();
+        Hide();
     }
 
-    private void GameManager_OnGamePaused(object sender, System.EventArgs e)
+    private void GameManager_OnGamePaused(object sender, EventArgs e)
     {
-        ShowPauseMenu();
+        Show();
     }
 
-    private void GameManager_OnGameUnpaused(object sender, System.EventArgs e)
+    private void GameManager_OnGameUnpaused(object sender, EventArgs e)
     {
-        HidePauseMenu();
+        Hide();
     }
 
-    public void ShowPauseMenu()
+    private void Show()
     {
-        PlayerMovement.Instance.SetInteracting(true);
-        CursorUtils.ShowCursor();
         gameObject.SetActive(true);
     }
 
-    public void HidePauseMenu()
+    private void Hide()
     {
-        PlayerMovement.Instance.SetInteracting(false);
-        CursorUtils.HideCursor();
         gameObject.SetActive(false);
     }
 }

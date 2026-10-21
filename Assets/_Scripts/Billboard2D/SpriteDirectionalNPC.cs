@@ -1,66 +1,51 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
+// Visual dos NPCs: escolhe frente/lado/costas comparando para onde o NPC olha com a direção da câmera.
 public class SpriteDirectionalNPC : MonoBehaviour
 {
-    [SerializeField] SpriteRenderer spriteRenderer;
-    [SerializeField] Animator animator;
+    private const string MOVE_X = "MoveX";
+    private const string MOVE_Y = "MoveY";
 
-    [SerializeField] bool hasTwoAniamations = false;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Animator animator;
+    [SerializeField] private Transform mainTransform;
 
+    [Tooltip("Marque se o sprite tem animações próprias para esquerda e direita; senão a lateral é espelhada com flipX")]
+    [FormerlySerializedAs("hasTwoAniamations")]
+    [SerializeField] private bool hasTwoSideAnimations = false;
 
-    [SerializeField] Transform mainTransform;
+    [Range(0f, 180f)][SerializeField] private float backAngle = 65f;
+    [Range(0f, 180f)][SerializeField] private float sideAngle = 155f;
 
-    [Range(0f, 180f)][SerializeField] float backAngle = 65f;
-    [Range(0f, 180f)][SerializeField] float sideAngle = 155f;
-
-
-    void LateUpdate()
+    private void LateUpdate()
     {
-        if (Camera.main == null) return;
+        if (Camera.main == null)
+            return;
 
-        SpriteDirectional();
-
+        Vector2 animationDirection = GetAnimationDirection();
+        animator.SetFloat(MOVE_X, animationDirection.x);
+        animator.SetFloat(MOVE_Y, animationDirection.y);
     }
-    private void SpriteDirectional()
+
+    private Vector2 GetAnimationDirection()
     {
+        Vector3 cameraForward = Camera.main.transform.forward;
+        cameraForward.y = 0f;
 
-        Vector3 cameraForwardVector = new Vector3(Camera.main.transform.forward.x, 0f, Camera.main.transform.forward.z);
-
-        float signedAngle = Vector3.SignedAngle(mainTransform.forward, cameraForwardVector, Vector3.up);
-
-        Vector2 animationDirection = new Vector2(0f, -1f);
-
+        float signedAngle = Vector3.SignedAngle(mainTransform.forward, cameraForward, Vector3.up);
         float angle = Mathf.Abs(signedAngle);
 
-
         if (angle < backAngle)
-        {
-            animationDirection = new Vector2(0f, -1f); // Frente
-        }
-        else if (angle < sideAngle)
-        {
-            if (hasTwoAniamations)
-            {
-                if (signedAngle < 0f)
-                    animationDirection = new Vector2(-1f, 0f);
-                else
-                    animationDirection = new Vector2(1f, 0f);
-            }
-            else
-            {
-                animationDirection = new Vector2(Mathf.Sign(signedAngle), 0f); // Lados
+            return new Vector2(0f, -1f); // Frente
 
-                if (signedAngle < 0f)
-                    spriteRenderer.flipX = false;
-                else
-                    spriteRenderer.flipX = true;
-            }
-        }
-        else
-        {
-            animationDirection = new Vector2(0f, 1f); // Costas
-        }
-        animator.SetFloat("MoveX", animationDirection.x);
-        animator.SetFloat("MoveY", animationDirection.y);
+        if (angle >= sideAngle)
+            return new Vector2(0f, 1f); // Costas
+
+        // Lados
+        if (!hasTwoSideAnimations)
+            spriteRenderer.flipX = signedAngle >= 0f;
+
+        return new Vector2(signedAngle < 0f ? -1f : 1f, 0f);
     }
 }

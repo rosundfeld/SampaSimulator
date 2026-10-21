@@ -2,14 +2,11 @@ using UnityEngine;
 
 public class PlayerPersistence : MonoBehaviour, IDataPersistence
 {
-
-    public SaveManager saveManager;
-
-    void Awake()
+    private void Start()
     {
-        saveManager.Register(this);
+        SaveManager.Instance.Register(this);
     }
-    
+
     public void LoadData(SaveData data)
     {
         transform.position = data.playerPosition;

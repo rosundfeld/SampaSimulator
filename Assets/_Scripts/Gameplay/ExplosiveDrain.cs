@@ -1,48 +1,44 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ExplosiveDrain : MonoBehaviour
 {
-    const string PLAYER_TAG = "Player";
-    const string EXPLODE_TRIGGER = "Explosion";
+    private const string PLAYER_TAG = "Player";
+    private const string EXPLOSION_TRIGGER = "Explosion";
 
-    [SerializeField] private Transform GFX;
+    // Static porque a cena pode ter vários bueiros; quem escuta (SoundManager) não precisa conhecer cada um.
+    public static event EventHandler OnAnyExplosion;
 
-    public event EventHandler OnPlayerKilled;
+    [FormerlySerializedAs("GFX")]
+    [SerializeField] private Transform gfx;
 
-    public static ExplosiveDrain Instance { get; private set; }
+    private Animator gfxAnimator;
+
+    private void Awake()
+    {
+        gfxAnimator = gfx.GetComponent<Animator>();
+    }
+
+    private void Start()
+    {
+        gfx.gameObject.SetActive(false);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag(PLAYER_TAG))
             return;
-        showGFX();
-        KillPlayer();
+
+        Explode();
     }
 
-    private void Awake()
+    private void Explode()
     {
-        Instance = this;
-    }
+        gfx.gameObject.SetActive(true);
+        gfxAnimator.SetTrigger(EXPLOSION_TRIGGER);
 
-    private void KillPlayer()
-    {
-        GFX.GetComponent<Animator>().SetTrigger(EXPLODE_TRIGGER);
-        OnPlayerKilled?.Invoke(this, EventArgs.Empty);
-        PlayerDeathManager.Instance?.Kill(PlayerDeathManager.DeathCause.ManholeExplosion);
-    }
-
-    private void Start()
-    {
-        hideGFX();
-    }
-
-    private void showGFX()
-    {
-        GFX.gameObject.SetActive(true);
-    }
-    private void hideGFX()
-    {
-        GFX.gameObject.SetActive(false);
+        OnAnyExplosion?.Invoke(this, EventArgs.Empty);
+        PlayerDeathManager.Instance.Kill(PlayerDeathManager.DeathCause.ManholeExplosion);
     }
 }

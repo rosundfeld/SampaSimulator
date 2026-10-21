@@ -1,89 +1,58 @@
 using UnityEngine;
 
+// Visual do player: escolhe a animação direcional (relativa à câmera) a partir da velocidade do Rigidbody.
 public class SpriteDirectionalController : MonoBehaviour
 {
-    [SerializeField] SpriteRenderer spriteRenderer;
-    [SerializeField] Animator animator;
-    [SerializeField] Rigidbody playerRb;
-    [SerializeField] float moveThreshold = 0.05f;
-    [SerializeField] float dampTime = 0.1f;
-    [SerializeField] float minAnimatorSpeed = 0.5f;
-    [SerializeField] float maxAnimatorSpeed = 2.5f;
+    private const string RUNNING = "Running";
+    private const string MOVE_X = "MoveX";
+    private const string MOVE_Y = "MoveY";
 
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Animator animator;
+    [SerializeField] private Rigidbody playerRb;
+    [SerializeField] private float moveThreshold = 0.05f;
+    [SerializeField] private float dampTime = 0.1f;
+    [SerializeField] private float minAnimatorSpeed = 0.5f;
+    [SerializeField] private float maxAnimatorSpeed = 2.5f;
 
-    private Vector2 lastMoveDir = new Vector2(0f, -1f); // direção inicial (ajuste se qu
-    void LateUpdate()
+    private Vector2 lastMoveDir = new Vector2(0f, -1f); // Começa virado para a câmera
+
+    private void LateUpdate()
     {
-        if (Camera.main == null || playerRb == null) return;
+        if (Camera.main == null)
+            return;
 
-        //SpriteDirectional();
-
-        Vector3 vel = playerRb.linearVelocity;
-        vel.y = 0f;
-        bool isMoving = vel.sqrMagnitude >= moveThreshold * moveThreshold;
-        animator.SetBool("Running", isMoving);
+        Vector3 velocity = playerRb.linearVelocity;
+        velocity.y = 0f;
+        bool isMoving = velocity.sqrMagnitude >= moveThreshold * moveThreshold;
+        animator.SetBool(RUNNING, isMoving);
 
         // Sem isso a animação toca sempre no mesmo ritmo, independente da velocidade real (walk == sprint visualmente).
-        animator.speed = isMoving && PlayerMovement.Instance != null && PlayerMovement.Instance.MoveSpeed > 0.01f
-            ? Mathf.Clamp(vel.magnitude / PlayerMovement.Instance.MoveSpeed, minAnimatorSpeed, maxAnimatorSpeed)
+        float moveSpeed = PlayerMovement.Instance.MoveSpeed;
+        animator.speed = isMoving && moveSpeed > 0.01f
+            ? Mathf.Clamp(velocity.magnitude / moveSpeed, minAnimatorSpeed, maxAnimatorSpeed)
             : 1f;
 
-        if (!isMoving)
-        {
-                animator.SetFloat("MoveX", lastMoveDir.x, dampTime, Time.deltaTime);
-        animator.SetFloat("MoveY", lastMoveDir.y, dampTime, Time.deltaTime);
-            return;
-        }
+        if (isMoving)
+            lastMoveDir = GetCameraRelativeDirection(velocity.normalized);
 
-        Vector3 dir = vel.normalized;
+        animator.SetFloat(MOVE_X, lastMoveDir.x, dampTime, Time.deltaTime);
+        animator.SetFloat(MOVE_Y, lastMoveDir.y, dampTime, Time.deltaTime);
 
-        Vector3 camForward = Camera.main.transform.forward;
-        camForward.y = 0f;
-        camForward.Normalize();
-
-        Vector3 camRight = Camera.main.transform.right;
-        camRight.y = 0f;
-        camRight.Normalize();
-
-        float moveX = Vector3.Dot(dir, camRight);
-        float moveY = Vector3.Dot(dir, camForward);
-
-        lastMoveDir = new Vector2(moveX, moveY);
-
-        // Se W estiver tocando animação invertida, troque por -moveY
-        animator.SetFloat("MoveX", moveX, dampTime, Time.deltaTime);
-        animator.SetFloat("MoveY", moveY, dampTime, Time.deltaTime);
-
-
-        if (Mathf.Abs(moveX) > 0.1f)
-        {
-            spriteRenderer.flipX = moveX < 0f;
-        }
+        if (isMoving && Mathf.Abs(lastMoveDir.x) > 0.1f)
+            spriteRenderer.flipX = lastMoveDir.x < 0f;
     }
-    // private void SpriteDirectional() {
 
-    //     Vector3 cameraForwardVector = new Vector3(Camera.main.transform.forward.x, 0f, Camera.main.transform.forward.z);
+    private Vector2 GetCameraRelativeDirection(Vector3 worldDirection)
+    {
+        Vector3 cameraForward = Camera.main.transform.forward;
+        cameraForward.y = 0f;
+        cameraForward.Normalize();
 
-    //     float signedAngle = Vector3.SignedAngle(mainTransform.forward, cameraForwardVector, Vector3.up);
+        Vector3 cameraRight = Camera.main.transform.right;
+        cameraRight.y = 0f;
+        cameraRight.Normalize();
 
-    //     Vector2 animationDirection = new Vector2(0f, -1f);
-
-    //     float angle = Mathf.Abs(signedAngle);
-
-
-    //     if (angle < backAngle)
-    //     {
-    //         animationDirection = new Vector2(0f, -1f); // Frente
-    //     }
-    //     else if (angle < sideAngle)
-    //     {
-    //         animationDirection = new Vector2(Mathf.Sign(signedAngle), 0f); // Lados
-    //     }
-    //     else
-    //     {
-    //         animationDirection = new Vector2(0f, 1f); // Costas
-    //     }
-    //     animator.SetFloat("MoveX", animationDirection.x);
-    //     animator.SetFloat("MoveY", animationDirection.y);
-    // }
+        return new Vector2(Vector3.Dot(worldDirection, cameraRight), Vector3.Dot(worldDirection, cameraForward));
+    }
 }

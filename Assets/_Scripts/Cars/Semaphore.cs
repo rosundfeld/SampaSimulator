@@ -1,56 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
+// Alterna periodicamente os bloqueios de cada lado do cruzamento (objeto ativo = sinal fechado para os carros).
 public class Semaphore : MonoBehaviour
 {
-    public List<GameObject> Semaphores;
-    public float switchInterval = 60f;
-    public bool isSwitching = true;
+    [FormerlySerializedAs("Semaphores")]
+    [SerializeField] private List<GameObject> semaphoreList;
+    [SerializeField] private float switchInterval = 60f;
 
-    private Coroutine switchCoroutine;
-    void Start()
+    private void Start()
     {
-        StartSwitching();
+        StartCoroutine(SwitchSemaphoreRoutine());
     }
 
-    public void StartSwitching()
+    private IEnumerator SwitchSemaphoreRoutine()
     {
-        if (isSwitching) return;
-        isSwitching = true;
-        switchCoroutine = StartCoroutine(SwitchSemaphoreRoutine());
-    }
-
-    public void StopSwitching()
-    {
-        if (!isSwitching) return;
-        isSwitching = false;
-
-        // Opcionalmente, cancelar imediatamente usando StopCoroutine
-        if (switchCoroutine != null)
-        {
-            StopCoroutine(switchCoroutine);
-            switchCoroutine = null;
-        }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    IEnumerator SwitchSemaphoreRoutine()
-    {
-        while (isSwitching)
+        while (true)
         {
             yield return new WaitForSeconds(switchInterval);
-            foreach (GameObject semaphore in Semaphores)
-            {
+            foreach (GameObject semaphore in semaphoreList)
                 semaphore.SetActive(!semaphore.activeSelf);
-            }
         }
     }
 }
