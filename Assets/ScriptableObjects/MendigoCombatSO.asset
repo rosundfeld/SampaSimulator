@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f2772a26361659439b3a51b6285604a, type: 3}
+  m_Name: MendigoCombatSO
+  m_EditorClassIdentifier: Assembly-CSharp::DialogCombatSO
+  character:
+    name: Maicu
+    portrait: {fileID: 21300000, guid: 4142bac88d8fe0849992e74eaa825314, type: 3}
+    voice: {fileID: 11400000, guid: 5cc900ed5f8933e45a6280430949616d, type: 2}
+  rounds:
+  - npcLine: Ai maluco me passa uma moedinha?
+    options:
+    - phrase: Opa, pode deixar
+      stressDelta: -0.25
+    - phrase: "ixi irm\xE3o, hoje n\xE3o vai dar"
+      stressDelta: 0.1
+    - phrase: '*Ignora e segue em frente*'
+      stressDelta: 0.3
+  - npcLine: "Co\xE9 chefe me ajuda ai comprar o leite da minha filha"
+    options:
+    - phrase: Vou pegar o leite aqui no meu saco
+      stressDelta: -0.3
+    - phrase: "Hoje n\xE3o tenho chefe"
+      stressDelta: 0.1
+    - phrase: "Eu conhe\xE7o o Chic\xE3o"
+      stressDelta: 0.3
+  - npcLine: Beleza, tu ta fudido
+    options:
+    - phrase: "N\xE3o tanto quanto sua m\xE3e, aquela cadela"
+      stressDelta: -0.3
+    - phrase: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      stressDelta: 0.1
+    - phrase: "Voc\xEA sabe quem \xE9 meu pai?"
+      stressDelta: 0.3
+  startStress: 0.5
+  decayPerSecond: 0.04
+  typingMistakePenalty: -0.1

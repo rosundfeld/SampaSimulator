@@ -10,31 +10,31 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1371565924304183622, guid: d0fd042cbbca67742a4363e8dc7f8fdc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 10.849969
       objectReference: {fileID: 0}
     - target: {fileID: 1371565924304183622, guid: d0fd042cbbca67742a4363e8dc7f8fdc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.5599866
       objectReference: {fileID: 0}
     - target: {fileID: 1371565924304183622, guid: d0fd042cbbca67742a4363e8dc7f8fdc, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 205.55484
       objectReference: {fileID: 0}
     - target: {fileID: 1371565924304183622, guid: d0fd042cbbca67742a4363e8dc7f8fdc, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 1371565924304183622, guid: d0fd042cbbca67742a4363e8dc7f8fdc, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1371565924304183622, guid: d0fd042cbbca67742a4363e8dc7f8fdc, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 1371565924304183622, guid: d0fd042cbbca67742a4363e8dc7f8fdc, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1371565924304183622, guid: d0fd042cbbca67742a4363e8dc7f8fdc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -78,8 +78,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfe23dda598f3dc4ab6062e1ebcea5a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCSpawn
-  NpcList:
-  - {fileID: 0}
-  spawnInterval: 2
-  spawnRange: 10
-  isSpawning: 0
+  prefabList:
+  - {fileID: 1685542898247944045, guid: 1e430988854e30947964e172e61912e2, type: 3}
+  - {fileID: 1802463241029408172, guid: fdd43405d9274a543a47086a4fea7e6f, type: 3}
+  minSpawnInterval: 1
+  maxSpawnInterval: 10

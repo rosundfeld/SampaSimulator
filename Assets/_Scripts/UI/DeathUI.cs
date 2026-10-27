@@ -12,11 +12,11 @@ public class DeathUI : MonoBehaviour
     {
         mainMenuButton.onClick.AddListener(() =>
         {
-            Loader.Load(Loader.Scene.MainMenu);
+            Loader.Load(Loader.Scene.MainMenuScene);
         });
         tryAgainButton.onClick.AddListener(() =>
         {
-            Loader.Load(Loader.Scene.Game);
+            Loader.Load(Loader.Scene.GameScene);
         });
     }
 

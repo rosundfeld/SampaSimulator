@@ -234,11 +234,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarMoviment
   speed: 20
+  hitSpeed: 2
   acceleration: 5
   hitTags:
   - Player
-  despawnTime: 7
   isStaticCar: 0
+  carSmoke: {fileID: 5243648683691259523}
 --- !u!54 &3139543500997486408
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c522934279b031747813bf19c237f7b8, type: 3}
+  m_Name: MendigoVoiceSO
+  m_EditorClassIdentifier: Assembly-CSharp::DialogVoiceSO
+  vowelClips:
+  - {fileID: 8300000, guid: 9d978d8ae28077245b191aeaebb0fee0, type: 3}
+  - {fileID: 8300000, guid: 271caa90aa571bc4496589cf1c4e77c8, type: 3}
+  - {fileID: 8300000, guid: b0b17b8215014d749adbbf20a5be7552, type: 3}
+  - {fileID: 8300000, guid: d640a11202d82b74facc5236420b03f6, type: 3}
+  - {fileID: 8300000, guid: cd42722dfb4c3f143841358a01f5f980, type: 3}
+  blipsPerWord: 3
+  volume: 0.5
+  volumeVariation: 0.127
+  basePitch: 1.138
+  pitchVariation: 0.108
+  questionPitchRise: 0.2
+  exclamationPitchBoost: 0.1
+  pitchGlideSpeed: 3.5

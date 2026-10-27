@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -11,11 +12,26 @@ public class DialogManager : MonoBehaviour
 
     public static DialogManager Instance { get; private set; }
 
+    public event EventHandler<OnLetterTypedEventArgs> OnLetterTyped;
+    public class OnLetterTypedEventArgs : EventArgs
+    {
+        public DialogVoiceSO voice;
+        public char letter;
+        public string line;
+        public int letterIndex;
+        // '.', '!' ou '?' que fecha a frase atual ('\0' se não houver), para a voz já subir no começo de uma pergunta.
+        public char sentenceEnding;
+        // Ignora o blipsPerWord: no combate cada vogal digitada é um feedback de acerto, então todas falam.
+        public bool speakAllVowels;
+    }
+
     [SerializeField] private Image characterIcon;
     [SerializeField] private TextMeshProUGUI characterName;
     [SerializeField] private TextMeshProUGUI dialogArea;
     [SerializeField] private Animator animator;
     [SerializeField] private float typingSpeed = 0.2f;
+    [SerializeField] private float commaPause = 0.15f;
+    [SerializeField] private float sentencePause = 0.35f;
     [SerializeField] private float hideDelay = 1f;
     [SerializeField] private float restartCooldown = 2f;
 
@@ -90,12 +106,51 @@ public class DialogManager : MonoBehaviour
 
     private IEnumerator TypeSentence(DialogLine dialogLine)
     {
+        string line = dialogLine.line;
         dialogArea.text = "";
-        foreach (char letter in dialogLine.line)
+        for (int i = 0; i < line.Length; i++)
         {
+            char letter = line[i];
             dialogArea.text += letter;
-            yield return new WaitForSeconds(typingSpeed);
+
+            OnLetterTyped?.Invoke(this, new OnLetterTypedEventArgs
+            {
+                voice = dialogLine.character.voice,
+                letter = letter,
+                line = line,
+                letterIndex = i,
+                sentenceEnding = GetSentenceEnding(line, i),
+            });
+
+            yield return new WaitForSeconds(GetDelayAfter(letter));
         }
+    }
+
+    private float GetDelayAfter(char letter)
+    {
+        switch (letter)
+        {
+            case ',':
+            case ';':
+            case ':':
+                return commaPause;
+            case '.':
+            case '!':
+            case '?':
+                return sentencePause;
+            default:
+                return typingSpeed;
+        }
+    }
+
+    public static char GetSentenceEnding(string line, int index)
+    {
+        for (int i = index; i < line.Length; i++)
+        {
+            if (line[i] == '.' || line[i] == '!' || line[i] == '?')
+                return line[i];
+        }
+        return '\0';
     }
 
     private IEnumerator HideDialogBoxAfterDelay()

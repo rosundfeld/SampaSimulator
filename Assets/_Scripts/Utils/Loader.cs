@@ -3,17 +3,24 @@ using UnityEngine.SceneManagement;
 
 public static class Loader
 {
+    private static Scene targetSceneIndex;
     // Enum names must match the scene names in the Build Profile scene list.
     public enum Scene
     {
-        MainMenu,
-        Game,
+        MainMenuScene,
+        LoadingScene,
+        GameScene,
     }
 
     public static void Load(Scene targetScene)
     {
-        // Sair do jogo pelo menu de pause deixaria o timeScale em 0 na próxima cena.
+        Loader.targetSceneIndex = targetScene;
         Time.timeScale = 1f;
-        SceneManager.LoadScene(targetScene.ToString());
+        SceneManager.LoadScene(Scene.LoadingScene.ToString());
+    }
+
+    public static void LoaderCallback()
+    {
+        SceneManager.LoadScene(targetSceneIndex.ToString());
     }
 }

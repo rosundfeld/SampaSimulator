@@ -21,7 +21,7 @@ public class EventClick : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         switch (gameObject.name)
         {
             case PLAY_ITEM:
-                Loader.Load(Loader.Scene.Game);
+                Loader.Load(Loader.Scene.GameScene);
                 break;
             case QUIT_ITEM:
                 Application.Quit();

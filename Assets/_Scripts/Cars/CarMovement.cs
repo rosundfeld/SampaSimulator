@@ -21,6 +21,7 @@ public class CarMovement : MonoBehaviour
 	[SerializeField] private string[] hitTags = { PLAYER_TAG };
 
 	[SerializeField] private bool isStaticCar = false;
+	[SerializeField] private GameObject carSmoke;
 
 	// Colliders (traseira de outro carro / semáforo) que estão bloqueando este carro.
 	private readonly HashSet<Collider> blockingColliders = new HashSet<Collider>();
@@ -43,7 +44,10 @@ public class CarMovement : MonoBehaviour
 	private void FixedUpdate()
 	{
 		if (isStaticCar)
+		{
+			carSmoke.SetActive(false);
 			return;
+		}
 
 		// Parado enquanto houver colliders bloqueando; senão acelera até a máxima
 		if (blockingColliders.Count > 0)

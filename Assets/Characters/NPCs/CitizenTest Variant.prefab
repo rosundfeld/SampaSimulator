@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 334992787015919886, guid: 89880f67c7f6af2468c286f2494bc4c2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -21.622341
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 334992787015919886, guid: 89880f67c7f6af2468c286f2494bc4c2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.56501
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 334992787015919886, guid: 89880f67c7f6af2468c286f2494bc4c2, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 22.082863
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 334992787015919886, guid: 89880f67c7f6af2468c286f2494bc4c2, type: 3}
       propertyPath: m_LocalRotation.w
@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 389504445028722150, guid: 89880f67c7f6af2468c286f2494bc4c2, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 2283c7038ea080c4b9ab859a0a5c74c5, type: 2}
     - target: {fileID: 951886607716600914, guid: 89880f67c7f6af2468c286f2494bc4c2, type: 3}
       propertyPath: m_Name
       value: CitizenTest Variant
@@ -72,6 +76,10 @@ PrefabInstance:
       propertyPath: m_StoppingDistance
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3862570165726027984, guid: 89880f67c7f6af2468c286f2494bc4c2, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -946123245, guid: 30fc57dce90534d4b9855e192e7a8c14, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

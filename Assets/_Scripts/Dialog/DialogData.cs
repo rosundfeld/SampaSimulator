@@ -7,6 +7,7 @@ public class DialogCharacter
 {
     public string name;
     public Sprite portrait;
+    public DialogVoiceSO voice;
 }
 
 [Serializable]
