@@ -10,7 +10,7 @@ public class PlayerStaminaUI : MonoBehaviour
 
     private void Start()
     {
-        PlayerMovement.Instance.OnStaminaChanged += PlayerMovement_OnStaminaChanged;
+        PlayerStamina.Instance.OnStaminaChanged += PlayerStamina_OnStaminaChanged;
 
         barImage.fillAmount = 1f;
         Hide();
@@ -23,11 +23,11 @@ public class PlayerStaminaUI : MonoBehaviour
             Hide();
     }
 
-    private void PlayerMovement_OnStaminaChanged(object sender, PlayerMovement.OnStaminaChangedEventArgs e)
+    private void PlayerStamina_OnStaminaChanged(object sender, PlayerStamina.StaminaChangedEventArgs e)
     {
-        barImage.fillAmount = e.staminaNormalized;
+        barImage.fillAmount = e.StaminaNormalized;
 
-        if (e.isDraining)
+        if (e.IsDraining)
         {
             hideTimer = hideDelay;
             Show();
