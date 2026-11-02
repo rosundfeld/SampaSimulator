@@ -5,6 +5,7 @@ public class ThirdPersonCam : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private CinemachineInputAxisController axisController;
+    [SerializeField] private CinemachineInputAxisController firstPersonAxisController; // Opcional: só em cenas com CameraViewSwitcher
     [SerializeField] private Transform orientation; // Eixos forward/right relativos à câmera, lidos pelo PlayerMovement
     [SerializeField] private Transform player;
 
@@ -12,6 +13,8 @@ public class ThirdPersonCam : MonoBehaviour
     {
         bool isCameraLocked = PlayerMovement.Instance.IsInteracting || !GameManager.Instance.IsGamePlaying();
         axisController.enabled = !isCameraLocked;
+        if (firstPersonAxisController != null)
+            firstPersonAxisController.enabled = !isCameraLocked;
 
         if (!isCameraLocked)
             UpdateOrientation();

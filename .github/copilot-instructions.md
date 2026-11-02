@@ -2,13 +2,13 @@
 - Project name: SampaSimulator
 - Unity version: Unity 6000.3.14f1
 - Active scene:
-  - Name: Loading
+  - Name: HouseScene
   - Tags:
-    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Car, Semaphore, CarBack, Jogar, Sair, Creditos, Despawner, NPC
+    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController
   - Layers:
-    - Default, TransparentFX, Ignore Raycast, Water, UI, MainCameraLayer, whatIsPlayer, whatIsGround, whatIsWall, Buildings, Miscs, Cars, NPC, Obstacle
+    - Default, TransparentFX, Ignore Raycast, Water, UI
 - Active game object:
-  - Name: Main Camera
-  - Tag: MainCamera
-  - Layer: Default
+  - Name: Int_WB_01_Floor_01 (57)
+  - Tag: Untagged
+  - Layer: 10
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

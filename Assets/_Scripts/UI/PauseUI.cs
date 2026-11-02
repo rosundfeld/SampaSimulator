@@ -11,7 +11,7 @@ public class PauseUI : MonoBehaviour
     {
         menuButton.onClick.AddListener(() =>
         {
-            Loader.Load(Loader.Scene.MainMenu);
+            Loader.Load(Loader.Scene.MainMenuScene);
         });
         resumeButton.onClick.AddListener(() =>
         {

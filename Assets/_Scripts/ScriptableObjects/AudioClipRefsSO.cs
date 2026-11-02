@@ -6,4 +6,6 @@ public class AudioClipRefsSO : ScriptableObject
     public AudioClip[] footstep;
     public AudioClip[] npcs;
     public AudioClip[] explosion;
+    public AudioClip[] cough;
+    public AudioClip[] co2Warning;
 }

@@ -39,6 +39,16 @@ public class SoundManager : MonoBehaviour
         PlaySound(audioClipRefsSO.footstep, position, volumeMultiplier);
     }
 
+    public void PlayCoughSound(Vector3 position)
+    {
+        PlaySound(audioClipRefsSO.cough, position);
+    }
+
+    public void PlayCO2WarningSound(Vector3 position)
+    {
+        PlaySound(audioClipRefsSO.co2Warning, position);
+    }
+
     private void PlaySound(AudioClip[] audioClipArray, Vector3 position, float volumeMultiplier = 1f)
     {
         if (audioClipArray.Length == 0)

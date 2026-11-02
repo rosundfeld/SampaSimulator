@@ -11,12 +11,17 @@ public class GameInput : MonoBehaviour
     public event EventHandler OnJumpPressed;
     public event EventHandler<bool> OnJumpHeldChanged;
     public event EventHandler<bool> OnSprintStateChanged;
+    // Caractere já composto pelo layout do teclado (ex: "~" + "a" chega como 'ã'), usado no combate de diálogo.
+    public event EventHandler<char> OnTextInput;
 
     private PlayerInputSystem playerInputActions;
 
     private void Awake()
     {
         Instance = this;
+
+        if (Keyboard.current != null)
+            Keyboard.current.onTextInput += Keyboard_onTextInput;
 
         playerInputActions = new PlayerInputSystem();
         playerInputActions.Player.Enable();
@@ -32,6 +37,9 @@ public class GameInput : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (Keyboard.current != null)
+            Keyboard.current.onTextInput -= Keyboard_onTextInput;
+
         playerInputActions.Player.Interact.performed -= Interact_performed;
         playerInputActions.Player.Pause.performed -= Pause_performed;
         playerInputActions.Player.Jump.performed -= Jump_performed;
@@ -43,6 +51,11 @@ public class GameInput : MonoBehaviour
         // Disable antes do Dispose evita o aviso de leak do finalizer gerado pelo Input System.
         playerInputActions.Player.Disable();
         playerInputActions.Dispose();
+    }
+
+    private void Keyboard_onTextInput(char character)
+    {
+        OnTextInput?.Invoke(this, character);
     }
 
     private void Interact_performed(InputAction.CallbackContext context)

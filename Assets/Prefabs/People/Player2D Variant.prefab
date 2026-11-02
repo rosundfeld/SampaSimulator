@@ -197,7 +197,7 @@ PrefabInstance:
       objectReference: {fileID: 4352818704404338856}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -22.3
+      value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalPosition.y
@@ -205,7 +205,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -45.3
+      value: -52
       objectReference: {fileID: 0}
     - target: {fileID: 6581993798330644888, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       propertyPath: m_LocalRotation.w
@@ -257,6 +257,12 @@ PrefabInstance:
       addedObject: {fileID: 1935191138845602028}
     - targetCorrespondingSourceObject: {fileID: 4026214129385021347, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 9168975575203053647}
+    - targetCorrespondingSourceObject: {fileID: 4026214129385021347, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5376468957061718982}
+    - targetCorrespondingSourceObject: {fileID: 4026214129385021347, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 6342499094636780915}
     - targetCorrespondingSourceObject: {fileID: 4026214129385021347, guid: 2dfec35ee372f2445833383d3e100904, type: 3}
       insertIndex: -1
@@ -284,12 +290,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239b3d063abb523409c5abc3803100f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  maxStamina: 10
-  staminaDrainRate: 0.75
-  staminaRegenRate: 0.5
-  minStaminaToRun: 0.01
-  regenDelay: 2
-  staminaBar: {fileID: 0}
   moveSpeed: 8
   runningSpeed: 14
   airMultiplier: 0.4
@@ -301,29 +301,23 @@ MonoBehaviour:
   jumpBufferTime: 0.12
   fallGravityMultiplier: 2.5
   lowJumpGravityMultiplier: 2
-  stepCheckDistance: 0.35
-  stepMaxHeight: 0.4
-  stepLowerRayHeight: 0.05
-  stepSmoothSpeed: 6
-  stepClearance: 0.1
-  stepMask:
+  groundCheckRadius: 0.4
+  groundProbeDistance: 0.15
+  whatIsGround:
     serializedVersion: 2
-    m_Bits: 1024
-  autoConfigureRigidbody: 0
+    m_Bits: 9216
   playerRadius: 0.7
   collisionsLayerMask:
     serializedVersion: 2
     m_Bits: 28672
-  playerHeight: 2
-  groundCheckRadius: 0.2
-  groundCheckDistance: 0.5
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 9216
   rotationSpeed: 5
   orientation: {fileID: 4352818704404338856}
   playerObj: {fileID: 775624385981028613}
   rb: {fileID: 6342499094636780915}
+  bodyCollider: {fileID: 6334306805588580154}
+  stamina: {fileID: 9168975575203053647}
+  stepAssist: {fileID: 5376468957061718982}
+  autoConfigureRigidbody: 0
 --- !u!114 &1935191138845602028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,7 +330,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b56d5b6e81af25e47b1ca669a728b244, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerPersistence
-  saveManager: {fileID: 0}
+--- !u!114 &9168975575203053647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371159292989341502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fa9a99ab39047d4ba6d96594ffaa94e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStamina
+  maxStamina: 10
+  staminaDrainRate: 0.75
+  staminaRegenRate: 0.5
+  minStaminaToRun: 0.01
+  regenDelay: 2
+--- !u!114 &5376468957061718982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371159292989341502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b701c743c550834ea92639ea47004d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStepAssist
+  stepMaxHeight: 0.4
+  stepCheckDistance: 0.35
+  stepLowerRayHeight: 0.05
+  stepSmoothSpeed: 6
+  stepClearance: 0.1
+  stepMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  rb: {fileID: 6342499094636780915}
+  bodyCollider: {fileID: 6334306805588580154}
 --- !u!54 &6342499094636780915
 Rigidbody:
   m_ObjectHideFlags: 0

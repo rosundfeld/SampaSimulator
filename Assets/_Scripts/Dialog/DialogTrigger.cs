@@ -53,6 +53,10 @@ public class DialogTrigger : MonoBehaviour
         if (!isPlayerInRange || !GameManager.Instance.IsGamePlaying() || GameManager.Instance.IsGamePaused())
             return;
 
+        // No combate o player digita frases, e o "e" de cada palavra também dispara o Interagir.
+        if (DialogCombatManager.Instance != null && DialogCombatManager.Instance.IsCombatActive())
+            return;
+
 
         if (DialogManager.Instance.IsDialogActive())
         {
