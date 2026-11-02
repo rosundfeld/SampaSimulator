@@ -97,3 +97,7 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Backups automáticos de cena que o Unity cria depois de um crash
+/[Aa]ssets/_Recovery/
+/[Aa]ssets/_Recovery.meta

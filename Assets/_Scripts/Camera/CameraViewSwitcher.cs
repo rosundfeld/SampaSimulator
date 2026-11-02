@@ -1,7 +1,7 @@
 using Unity.Cinemachine;
 using UnityEngine;
 
-// Alterna entre a câmera de terceira e de primeira pessoa; quem decide quando trocar chama SetFirstPerson (ex.: um trigger dentro de casa).
+// Alterna entre a câmera de terceira e de primeira pessoa; quem decide quando trocar chama setIsFirstPerson (ex.: um trigger dentro de casa).
 public class CameraViewSwitcher : MonoBehaviour
 {
     public static CameraViewSwitcher Instance { get; private set; }
@@ -31,16 +31,6 @@ public class CameraViewSwitcher : MonoBehaviour
             thirdPersonOrbit.HorizontalAxis.Value = firstPersonPanTilt.PanAxis.Value;
     }
 
-    public void SetFirstPerson(bool isFirstPerson)
-    {
-        // Evita resetar o tilt se alguém chamar repetidamente (ex.: OnTriggerStay).
-        if (isFirstPerson == IsFirstPerson)
-            return;
-
-        IsFirstPerson = isFirstPerson;
-        ApplyView();
-    }
-
     private void ApplyView()
     {
         // Com Binding Mode = World Space, o eixo horizontal da órbita já é o yaw da câmera, o mesmo valor que o Pan espera.
@@ -61,6 +51,11 @@ public class CameraViewSwitcher : MonoBehaviour
 
     public void setIsFirstPerson(bool isActive)
     {
+        // Evita resetar o tilt se alguém chamar repetidamente (ex.: OnTriggerStay).
+        if (isActive == IsFirstPerson)
+            return;
+
         IsFirstPerson = isActive;
+        ApplyView();
     }
 }
