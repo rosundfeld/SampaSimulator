@@ -7,6 +7,8 @@ public class SpriteDirectionalController : MonoBehaviour
     private const string MOVE_X = "MoveX";
     private const string MOVE_Y = "MoveY";
 
+    private const string DEAD = "Dead";
+
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Animator animator;
     [SerializeField] private Rigidbody playerRb;
@@ -41,6 +43,9 @@ public class SpriteDirectionalController : MonoBehaviour
 
         if (isMoving && Mathf.Abs(lastMoveDir.x) > 0.1f)
             spriteRenderer.flipX = lastMoveDir.x < 0f;
+
+        if (PlayerDeathManager.Instance.IsDead)
+            animator.SetTrigger(DEAD);
     }
 
     private Vector2 GetCameraRelativeDirection(Vector3 worldDirection)
